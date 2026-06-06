@@ -151,28 +151,6 @@ function App() {
         </nav>
 
         <div className="header-actions">
-          {user && (
-            <div style={{ position: 'relative' }}>
-              <button className="auth-btn" onClick={() => setShowUserMenu(!showUserMenu)}>
-                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--gold-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--secondary-color)', fontWeight: 'bold' }}>
-                  {user.name?.[0]?.toUpperCase()}
-                </div>
-                {user.name}
-              </button>
-              {showUserMenu && (
-                <div className="user-dropdown">
-                  {isAdmin && (
-                    <a href="/ak-management" className="dropdown-item">
-                      <LayoutDashboard size={16} /> Admin Panel
-                    </a>
-                  )}
-                  <button className="dropdown-item" onClick={logout}>
-                    <LogOut size={16} /> Đăng xuất
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
         </div>
       </header>
 
