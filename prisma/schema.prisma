@@ -11,7 +11,7 @@ model Member {
   id          Int      @id @default(autoincrement())
   name        String
   email       String?
-  avatar      String?  @db.Text
+  avatar      String?  @db.LongText
   position    String
   description String?  @db.Text
   isLeader    Boolean  @default(false)
