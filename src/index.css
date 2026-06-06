@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary-color: #F7F3EC; /* Main Background */
+    --secondary-color: #F4EEE4; /* Section Background */
+    --card-bg: #FFFFFF;
+    --gold-accent: #D4A017; /* Primary Gold */
+    --gold-hover: #C69214; /* Hover Gold */
+    --text-main: #173A6A; /* Primary Text */
+    --text-secondary: #4B5A73; /* Secondary Text */
+    --text-muted: #7A869A; /* Muted Text */
+    --border-color: #E6DDD0; /* Border */
+    --border-gold: rgba(212,160,23,0.25);
+    --footer-bg: #173A6A;
+    --navy-blue: #173A6A;
+    --dark-navy: #0F2C57;
+    --deep-navy: #0B2344;
+    
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Inter', sans-serif;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--primary-color);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+button {
+  font-family: var(--font-body);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--primary-color);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-accent);
+}

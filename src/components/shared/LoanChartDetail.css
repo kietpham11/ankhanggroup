@@ -1,0 +1,356 @@
+.loan-chart-detail {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  font-family: var(--font-body, 'Inter', sans-serif);
+}
+
+.lcd-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.lcd-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.lcd-icon {
+  background: rgba(23, 58, 106, 0.1);
+  color: var(--navy-blue, #173A6A);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.lcd-title-text {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--navy-blue, #173A6A);
+}
+
+.lcd-title-separator {
+  color: var(--text-muted, #94a3b8);
+  font-weight: 400;
+}
+
+.btn-back-calc {
+  background: transparent;
+  border: none;
+  color: var(--navy-blue, #173A6A);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.btn-back-calc:hover {
+  background: rgba(23, 58, 106, 0.05);
+}
+
+/* Layout */
+.lcd-body {
+  display: flex;
+}
+
+.lcd-sidebar {
+  width: 300px;
+  border-right: 1px solid var(--border-color, #e2e8f0);
+  padding: 1.5rem;
+  background: rgba(247, 243, 236, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.lcd-main {
+  flex: 1;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-width: 0;
+}
+
+/* Sidebar Sections */
+.lcd-sidebar-section h4 {
+  font-size: 0.9rem;
+  color: var(--navy-blue, #173A6A);
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.lcd-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.lcd-info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.lcd-info-label {
+  color: var(--text-muted, #64748b);
+}
+
+.lcd-info-value {
+  font-weight: 600;
+  color: var(--text-main, #333);
+  text-align: right;
+  max-width: 60%;
+}
+
+.lcd-filter-group {
+  margin-bottom: 1rem;
+}
+
+.lcd-filter-group:last-child {
+  margin-bottom: 0;
+}
+
+.lcd-filter-group label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-muted, #64748b);
+  margin-bottom: 0.5rem;
+}
+
+.lcd-filter-group select {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 6px;
+  background: var(--card-bg, #fff);
+  color: var(--text-main, #333);
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.lcd-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-main, #333);
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+/* Main Cards */
+.lcd-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.lcd-card {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 8px;
+  padding: 1.25rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.lcd-card-icon {
+  background: rgba(23, 58, 106, 0.05);
+  color: var(--navy-blue, #173A6A);
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.lcd-card-icon.green {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.lcd-card-info p {
+  font-size: 0.85rem;
+  color: var(--text-main, #334155);
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+
+.lcd-card-info h3 {
+  font-size: 1.25rem;
+  color: var(--navy-blue, #173A6A);
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  font-family: var(--font-body, 'Inter', sans-serif);
+}
+
+.lcd-card-info span {
+  font-size: 0.8rem;
+  color: var(--text-muted, #64748b);
+}
+
+/* Chart Area */
+.lcd-chart-container {
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.lcd-chart-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  color: var(--navy-blue, #173A6A);
+}
+
+.lcd-chart-wrapper {
+  height: 300px;
+  width: 100%;
+}
+
+/* Custom Chart Tooltip */
+.lcd-custom-tooltip {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.lcd-tooltip-label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--navy-blue, #173A6A);
+}
+
+.lcd-tooltip-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Table Area */
+.lcd-table-container {
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.lcd-table-header {
+  padding: 1rem 1.5rem;
+  background: rgba(247, 243, 236, 0.3);
+  font-weight: 600;
+  color: var(--navy-blue, #173A6A);
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.lcd-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.lcd-table th, .lcd-table td {
+  padding: 0.85rem 1rem;
+  text-align: right;
+  font-size: 0.85rem;
+  border-bottom: 1px dashed var(--border-color, #e2e8f0);
+}
+
+.lcd-table th {
+  font-weight: 600;
+  color: var(--text-muted, #64748b);
+  background: rgba(247, 243, 236, 0.1);
+}
+
+.lcd-table th:first-child, .lcd-table td:first-child {
+  text-align: center;
+}
+
+.lcd-table th:nth-child(2), .lcd-table td:nth-child(2) {
+  text-align: left;
+}
+
+.lcd-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Footer Note */
+.lcd-footer-note {
+  background: rgba(212, 160, 23, 0.1);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-main, #333);
+}
+
+.lcd-footer-note .text-gold {
+  color: var(--gold-accent, #d4a017);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .lcd-body {
+    flex-direction: column;
+  }
+  
+  .lcd-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  
+  .lcd-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .lcd-sidebar {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .lcd-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}

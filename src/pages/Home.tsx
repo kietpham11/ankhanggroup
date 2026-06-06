@@ -1,0 +1,207 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Building2, Search, MapPin, BadgeDollarSign, Maximize,
+  ShieldCheck, Map, Clock, Heart, BedDouble, Bath, ChevronRight, ChevronLeft,
+  LayoutDashboard, Briefcase
+} from 'lucide-react';
+import { propertiesAPI } from '../lib/api';
+
+interface Property {
+  id: number;
+  title: string;
+  slug: string;
+  address: string;
+  price: string;
+  area: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  type: string;
+  status: string;
+  images: { url: string }[];
+}
+
+const TYPE_LABELS: Record<string, string> = {
+  LAND: 'Đất nền', HOUSE: 'Nhà phố',
+};
+
+const bannerImages = [
+  "/images/banner1.png",
+  "/images/banner2.png",
+  "/images/banner3.png"
+];
+
+interface HomeProps {
+  onViewDetail?: (id: number) => void;
+  onViewAllProjects?: () => void;
+}
+
+export default function Home({ onViewDetail, onViewAllProjects }: HomeProps) {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    propertiesAPI.getAll()
+      .then(setProperties)
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % bannerImages.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const nextSlide = () => setCurrentSlide(prev => (prev + 1) % bannerImages.length);
+  const prevSlide = () => setCurrentSlide(prev => (prev - 1 + bannerImages.length) % bannerImages.length);
+
+  return (
+    <>
+      {/* HERO SLIDER */}
+      <section className="hero-slider">
+        {bannerImages.map((img, index) => (
+          <div
+            key={index}
+            className={`slide ${index === currentSlide ? 'active' : ''}`}
+            style={{ backgroundImage: `url(${img})` }}
+          />
+        ))}
+        <div className="slider-overlay"></div>
+
+        <button className="slider-btn prev-btn" onClick={prevSlide}>
+          <ChevronLeft size={32} />
+        </button>
+        <button className="slider-btn next-btn" onClick={nextSlide}>
+          <ChevronRight size={32} />
+        </button>
+
+        <div className="slider-dots">
+          {bannerImages.map((_, index) => (
+            <span
+              key={index}
+              className={`dot ${index === currentSlide ? 'active' : ''}`}
+              onClick={() => setCurrentSlide(index)}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* FEATURES ROW */}
+      <section className="features-row">
+        {[
+          { icon: <ShieldCheck size={32} />, title: 'Bất động sản chất lượng', sub: 'Pháp lý minh bạch' },
+          { icon: <Map size={32} />, title: 'Vị trí đắc địa', sub: 'Kết nối thuận tiện' },
+          { icon: <BadgeDollarSign size={32} />, title: 'An toàn & uy tín', sub: 'Nhiều ưu đãi hấp dẫn' },
+          { icon: <Clock size={32} />, title: 'Hỗ trợ tận tâm', sub: 'Tư vấn 24/7' },
+        ].map((f, i) => (
+          <div key={i} className="feature-item">
+            <div className="feature-icon">{f.icon}</div>
+            <div className="feature-text"><h4>{f.title}</h4><p>{f.sub}</p></div>
+          </div>
+        ))}
+      </section>
+
+      {/* FEATURED PROPERTIES */}
+      {(!isLoading && properties.length === 0) ? null : (
+        <section className="featured-section" id="properties">
+        <div className="section-header">
+          <h3 className="section-title">Bất Động Sản Nổi Bật</h3>
+          <a 
+            href="#projects" 
+            className="view-all" 
+            onClick={(e) => {
+              e.preventDefault();
+              if (onViewAllProjects) onViewAllProjects();
+            }}
+          >
+            Xem tất cả <ChevronRight size={16} />
+          </a>
+        </div>
+
+        {isLoading ? (
+          <div className="loading-state">Đang tải bất động sản...</div>
+        ) : (
+          <div className="property-grid">
+            {properties.map(prop => (
+              <div 
+                className="property-card" 
+                key={prop.id}
+                onClick={() => onViewDetail && onViewDetail(prop.id)}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="card-image-wrapper">
+                  <span className="card-badge">{TYPE_LABELS[prop.type] || prop.type}</span>
+                  <img
+                    src={prop.images?.[0]?.url || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&auto=format&fit=crop'}
+                    alt={prop.title}
+                    className="card-image"
+                  />
+                </div>
+                <div className="card-content">
+                  <h4 className="card-title">{prop.title}</h4>
+                  <p className="card-address"><MapPin size={14} /> {prop.address}</p>
+                  <div className="card-stats">
+                    <div className="stat-item"><Maximize className="stat-icon" size={14} /> {prop.area} m²</div>
+                    {prop.bedrooms != null && prop.bedrooms > 0 && (
+                      <div className="stat-item"><BedDouble className="stat-icon" size={14} /> {prop.bedrooms} PN</div>
+                    )}
+                    {prop.bathrooms != null && prop.bathrooms > 0 && (
+                      <div className="stat-item"><Bath className="stat-icon" size={14} /> {prop.bathrooms} WC</div>
+                    )}
+                  </div>
+                  <div className="card-footer">
+                    <div className="card-price">
+                      Từ {Number(prop.price).toLocaleString('vi-VN')} VNĐ
+                    </div>
+                    <div className="card-status">{prop.status === 'AVAILABLE' ? 'Đang bán' : prop.status === 'SOLD' ? 'Đã bán' : 'Cho thuê'}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+      )}
+
+      {/* LĨNH VỰC HOẠT ĐỘNG */}
+      <section className="business-areas-section">
+        <div className="section-header text-center">
+          <h3 className="section-title">Lĩnh Vực Hoạt Động</h3>
+          <p className="section-subtitle text-muted mt-2">Hệ sinh thái dịch vụ toàn diện của An Khang Group</p>
+        </div>
+
+        <div className="areas-grid">
+          {[
+            {
+              img: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&auto=format&fit=crop',
+              title: 'Dịch vụ',
+              desc: 'Mọi dịch vụ chúng tôi cung cấp đều hướng đến phục vụ và giải quyết những vướng mắc một cách nhanh chóng và thỏa mãn tối đa nhu cầu của khách hàng. An Khang Group không chỉ cung cấp sản phẩm bất động sản mà còn mang đến giải pháp toàn diện.'
+            },
+            {
+              img: 'https://images.unsplash.com/photo-1554469384-e58fac16e23a?w=800&auto=format&fit=crop',
+              title: 'Đầu tư',
+              desc: 'Thị trường bất động sản rất tiềm năng, nhu cầu nhà ở của người dân ngày càng tăng cao, nắm bắt được nhu cầu ấy, An Khang Group không ngừng nỗ lực phát triển vững mạnh về năng lực để kiến tạo những giá trị đầu tư đích thực.'
+            },
+            {
+              img: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&auto=format&fit=crop',
+              title: 'Xây dựng',
+              desc: 'Đầu tư phát triển dự án là một trong những mục tiêu mũi nhọn của An Khang Group. Chúng tôi đang nỗ lực phát triển mở rộng thị trường, vững mạnh về năng lực tài chính để tiến tới triển khai xây dựng những dự án mang tầm vóc quốc tế.'
+            }
+          ].map((area, i) => (
+            <div key={i} className="area-card">
+              <div className="area-image">
+                <img src={area.img} alt={area.title} />
+              </div>
+              <div className="area-content">
+                <h4 className="area-title">{area.title}</h4>
+                <p className="area-desc">{area.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </>
+  );
+}

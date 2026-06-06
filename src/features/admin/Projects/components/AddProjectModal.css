@@ -1,0 +1,262 @@
+/* Add Project Modal CSS */
+
+.apm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body, 'Inter', sans-serif);
+}
+
+.apm-modal {
+  background: #ffffff;
+  width: 90%;
+  max-width: 760px;
+  max-height: 90vh;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  animation: fadeInScale 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.apm-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #eef0f4;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.apm-header h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #173A6A;
+  margin: 0;
+}
+
+.apm-close-btn {
+  background: transparent;
+  border: none;
+  color: #718096;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+  padding: 0.2rem;
+}
+
+.apm-close-btn:hover {
+  color: #ef4444;
+}
+
+.apm-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.apm-section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #173A6A;
+  margin: 0 0 1rem 0;
+  text-transform: uppercase;
+}
+
+.apm-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.apm-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.apm-form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.apm-form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.apm-form-group label span {
+  color: #ef4444;
+}
+
+.apm-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.apm-input-wrapper input,
+.apm-input-wrapper select,
+.apm-form-group textarea {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: #1a202c;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.apm-input-wrapper input::placeholder,
+.apm-form-group textarea::placeholder {
+  color: #a0aec0;
+}
+
+.apm-form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.5;
+}
+
+.apm-input-wrapper input:focus,
+.apm-input-wrapper select:focus,
+.apm-form-group textarea:focus {
+  border-color: #d89f2a;
+}
+
+.apm-input-icon {
+  position: absolute;
+  right: 0.8rem;
+  color: #a0aec0;
+  pointer-events: none;
+}
+
+.apm-textarea-wrapper {
+  position: relative;
+}
+
+.apm-char-count {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.8rem;
+  font-size: 0.75rem;
+  color: #a0aec0;
+}
+
+.apm-upload-box {
+  border: 1.5px dashed #cbd5e0;
+  border-radius: 8px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  background: #fdfdfd;
+  transition: all 0.2s;
+  gap: 0.5rem;
+}
+
+.apm-upload-box:hover {
+  background: #f7fafc;
+  border-color: #d89f2a;
+}
+
+.apm-upload-icon {
+  color: #173A6A;
+  margin-bottom: 0.5rem;
+}
+
+.apm-upload-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin: 0;
+}
+
+.apm-upload-desc {
+  font-size: 0.85rem;
+  color: #718096;
+  margin: 0;
+}
+
+.apm-upload-desc strong {
+  color: #4a5568;
+}
+
+.apm-upload-format {
+  font-size: 0.75rem;
+  color: #a0aec0;
+  margin: 0;
+}
+
+.apm-footer {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid #eef0f4;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.apm-btn-cancel {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #4a5568;
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.apm-btn-cancel:hover {
+  background: #f7fafc;
+}
+
+.apm-btn-save {
+  background: #d89f2a;
+  border: none;
+  color: #ffffff;
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.apm-btn-save:hover {
+  background: #c38c20;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .apm-form-grid {
+    grid-template-columns: 1fr;
+  }
+}

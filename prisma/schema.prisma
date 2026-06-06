@@ -1,0 +1,203 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Member {
+  id          Int      @id @default(autoincrement())
+  name        String
+  email       String?
+  avatar      String?  @db.Text
+  position    String
+  description String?  @db.Text
+  isLeader    Boolean  @default(false)
+  status      String   @default("Đang hiển thị")
+  orderIndex  Int      @default(0)
+  facebook    String?
+  zalo        String?
+  tiktok      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("members")
+}
+
+model Project {
+  id          Int            @id @default(autoincrement())
+  name        String
+  slug        String         @unique
+  description String?        @db.Text
+  content     String?        @db.Text
+  location    String?
+  status      String?
+  views       Int            @default(0)
+  isFeatured  Boolean        @default(false)
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  images      ProjectImage[]
+  properties  Property[]
+
+  @@map("projects")
+}
+
+model ProjectImage {
+  id        Int     @id @default(autoincrement())
+  url       String
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId], map: "project_images_projectId_fkey")
+  @@map("project_images")
+}
+
+model Property {
+  id          Int             @id @default(autoincrement())
+  title       String
+  slug        String          @unique
+  description String          @db.Text
+  price       Decimal         @db.Decimal(15, 2)
+  area        Float
+  address     String
+  type        String
+  status      String          @default("AVAILABLE")
+  views       Int             @default(0)
+  isFeatured  Boolean         @default(false)
+  legal       String?
+  facades     Float?
+  bedrooms    Int?
+  bathrooms   Int?
+  direction   String?
+  mapImage    String?         @db.Text
+  projectId   Int?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  contacts    Contact[]
+  project     Project?        @relation(fields: [projectId], references: [id])
+  images      PropertyImage[]
+
+  @@index([projectId], map: "properties_projectId_fkey")
+  @@map("properties")
+}
+
+model PropertyImage {
+  id         Int      @id @default(autoincrement())
+  url        String
+  propertyId Int
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId], map: "property_images_propertyId_fkey")
+  @@map("property_images")
+}
+
+model Category {
+  id          Int     @id @default(autoincrement())
+  name        String
+  slug        String  @unique
+  description String?
+  posts       Post[]
+
+  @@map("categories")
+}
+
+model Post {
+  id         Int       @id @default(autoincrement())
+  title      String
+  slug       String    @unique
+  content    String    @db.Text
+  thumbnail  String?
+  published  Boolean   @default(false)
+  authorName String    @default("Admin")
+  categoryId Int?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  comments   Comment[]
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  @@index([categoryId], map: "posts_categoryId_fkey")
+  @@map("posts")
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  content    String   @db.Text
+  postId     Int
+  guestName  String   @default("Khách")
+  guestEmail String?
+  createdAt  DateTime @default(now())
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId], map: "comments_postId_fkey")
+  @@map("comments")
+}
+
+model Job {
+  id           Int         @id @default(autoincrement())
+  title        String
+  slug         String      @unique
+  department   String?
+  location     String?
+  type         String?
+  salaryRange  String?
+  description  String?     @db.Text
+  requirements String?     @db.Text
+  benefits     String?     @db.Text
+  hrName       String?
+  hrPhone      String?
+  hrEmail      String?
+  hrAddress    String?
+  status       String      @default("Đang mở")
+  deadline     DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  candidates   Candidate[]
+
+  @@map("jobs")
+}
+
+model Candidate {
+  id          Int      @id @default(autoincrement())
+  name        String
+  email       String
+  phone       String
+  cvUrl       String   @db.Text
+  coverLetter String?  @db.Text
+  status      String   @default("PENDING")
+  jobId       Int
+  createdAt   DateTime @default(now())
+  job         Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([jobId], map: "candidates_jobId_fkey")
+  @@map("candidates")
+}
+
+model Contact {
+  id         Int       @id @default(autoincrement())
+  name       String
+  email      String
+  phone      String
+  message    String    @db.Text
+  status     String    @default("PENDING")
+  source     String?
+  propertyId Int?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  property   Property? @relation(fields: [propertyId], references: [id])
+
+  @@index([propertyId], map: "contacts_propertyId_fkey")
+  @@map("contacts")
+}
+
+model Setting {
+  id          Int     @id @default(autoincrement())
+  key         String  @unique
+  value       String  @db.Text
+  description String? @db.Text
+
+  @@map("settings")
+}

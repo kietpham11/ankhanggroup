@@ -1,0 +1,366 @@
+/* Admin Add Post CSS */
+
+.aap-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.aap-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* Card General */
+.aap-card {
+  background: #ffffff;
+  border: 1px solid #eef0f4;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.aap-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #173A6A;
+  margin-bottom: 1.5rem;
+}
+
+/* Form Groups */
+.aap-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.aap-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.aap-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin-bottom: 0.5rem;
+}
+
+.aap-label span {
+  color: #ef4444;
+}
+
+.aap-input-wrapper {
+  position: relative;
+}
+
+.aap-input, .aap-textarea, .aap-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #4a5568;
+  outline: none;
+  transition: all 0.2s;
+  background: #ffffff;
+}
+
+.aap-input:focus, .aap-textarea:focus, .aap-select:focus {
+  border-color: #d89f2a;
+  box-shadow: 0 0 0 3px rgba(216, 159, 42, 0.1);
+}
+
+.aap-char-count {
+  position: absolute;
+  right: 1rem;
+  bottom: 0.75rem;
+  font-size: 0.75rem;
+  color: #a0aec0;
+  pointer-events: none;
+}
+
+.aap-helper-text {
+  font-size: 0.8rem;
+  color: #a0aec0;
+  margin-top: 0.5rem;
+}
+
+/* Select specifics */
+.aap-select-wrapper {
+  position: relative;
+}
+.aap-select {
+  appearance: none;
+  cursor: pointer;
+}
+.aap-select-icon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #a0aec0;
+  pointer-events: none;
+}
+
+/* Rich Text Editor */
+.aap-editor-container {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.aap-editor-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.aap-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.aap-toolbar-divider {
+  width: 1px;
+  height: 20px;
+  background: #cbd5e1;
+  margin: 0 0.25rem;
+}
+
+.aap-toolbar-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.aap-toolbar-btn:hover {
+  background: #e2e8f0;
+  color: #1a202c;
+}
+
+.aap-toolbar-select {
+  padding: 0.35rem 1.5rem 0.35rem 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #4a5568;
+  font-size: 0.85rem;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.aap-editor-content {
+  min-height: 300px;
+  padding: 1rem;
+  font-size: 0.95rem;
+  color: #1a202c;
+  line-height: 1.6;
+  outline: none;
+  overflow-y: auto;
+  background: #ffffff;
+}
+
+.aap-editor-footer {
+  padding: 0.5rem 1rem;
+  border-top: 1px solid #e2e8f0;
+  background: #ffffff;
+  text-align: right;
+  font-size: 0.75rem;
+  color: #a0aec0;
+}
+
+/* Right Sidebar */
+.aap-status-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.aap-radio-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.aap-radio-custom {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  transition: all 0.2s;
+}
+
+.aap-radio-input:checked + .aap-radio-custom {
+  border-color: #d89f2a;
+}
+
+.aap-radio-input:checked + .aap-radio-custom::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #d89f2a;
+}
+
+.aap-radio-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.aap-radio-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.aap-radio-desc {
+  font-size: 0.75rem;
+  color: #a0aec0;
+  margin-top: 0.15rem;
+}
+
+/* Image Upload */
+.aap-upload-box {
+  border: 2px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 2rem 1rem;
+  text-align: center;
+  background: #f8fafc;
+  transition: all 0.2s;
+}
+
+.aap-upload-box:hover {
+  border-color: #d89f2a;
+  background: #fffcf5;
+}
+
+.aap-upload-icon {
+  color: #173A6A;
+  margin-bottom: 1rem;
+}
+
+.aap-upload-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin-bottom: 0.5rem;
+}
+
+.aap-upload-or {
+  font-size: 0.8rem;
+  color: #a0aec0;
+  margin-bottom: 1rem;
+}
+
+.aap-btn-select-img {
+  background: #d89f2a;
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.aap-btn-select-img:hover {
+  background: #c58e23;
+}
+
+/* Action Bar */
+.aap-action-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+.aap-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.aap-btn-draft {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #4a5568;
+}
+
+.aap-btn-draft:hover {
+  background: #f8fafc;
+  color: #1a202c;
+}
+
+.aap-btn-preview {
+  background: #ffffff;
+  border: 1px solid #173A6A;
+  color: #173A6A;
+}
+
+.aap-btn-preview:hover {
+  background: #f8fafc;
+}
+
+.aap-btn-publish {
+  background: #d89f2a;
+  border: 1px solid #d89f2a;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.aap-btn-publish:hover {
+  background: #c58e23;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .aap-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .aap-form-row {
+    grid-template-columns: 1fr;
+  }
+  .aap-action-bar {
+    flex-direction: column;
+  }
+  .aap-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

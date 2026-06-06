@@ -1,0 +1,659 @@
+.acand-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem 0;
+  width: 100%;
+}
+
+/* Stats Row */
+.acand-stats-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.acand-stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.acand-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.acand-stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.acand-icon-blue { background: #eff6ff; color: #3b82f6; }
+.acand-icon-yellow { background: #fefce8; color: #eab308; }
+.acand-icon-green { background: #f0fdf4; color: #22c55e; }
+.acand-icon-purple { background: #faf5ff; color: #a855f7; }
+.acand-icon-red { background: #fef2f2; color: #ef4444; }
+
+.acand-stat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.acand-stat-title {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.acand-stat-info h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.acand-stat-desc {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Main Table Card */
+.acand-main-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 500px;
+}
+
+/* Toolbar */
+.acand-toolbar {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.acand-toolbar-left {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex: 1;
+}
+
+.acand-search-box {
+  position: relative;
+  width: 280px;
+}
+
+.acand-search-box svg {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+}
+
+.acand-search-box input {
+  width: 100%;
+  padding: 0.6rem 1rem 0.6rem 2.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.acand-search-box input:focus {
+  border-color: var(--gold-accent);
+  box-shadow: 0 0 0 2px rgba(216, 159, 42, 0.1);
+}
+
+.acand-filters {
+  display: flex;
+  gap: 1rem;
+}
+
+.acand-select-wrapper {
+  position: relative;
+}
+
+.acand-select-wrapper select {
+  appearance: none;
+  padding: 0.6rem 2.5rem 0.6rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  background: white;
+  outline: none;
+  cursor: pointer;
+  min-width: 160px;
+}
+
+.acand-select-wrapper svg {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.acand-toolbar-right {
+  display: flex;
+  gap: 1rem;
+}
+
+.acand-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: white;
+  color: var(--text-color);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.acand-btn-outline:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.acand-btn-outline.refresh {
+  color: #f59e0b;
+}
+.acand-btn-outline.refresh:hover {
+  background: #fef3c7;
+  border-color: #fcd34d;
+}
+
+/* Table container */
+.acand-table-container {
+  overflow-x: auto;
+  flex: 1;
+}
+
+.acand-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1100px;
+}
+
+.acand-table th {
+  background: #f8fafc;
+  padding: 1rem 1.5rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.acand-table td {
+  padding: 1rem 1.5rem;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+.acand-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+/* Candidate Column */
+.acand-candidate-cell {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.acand-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: var(--navy-primary);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.acand-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Avatar Colors for initials */
+.acand-avatar.color-0 { background: #dbeafe; color: #1e3a8a; } /* Blue */
+.acand-avatar.color-1 { background: #fefce8; color: #854d0e; } /* Yellow */
+.acand-avatar.color-2 { background: #f0fdf4; color: #14532d; } /* Green */
+.acand-avatar.color-3 { background: #faf5ff; color: #581c87; } /* Purple */
+.acand-avatar.color-4 { background: #fef2f2; color: #7f1d1d; } /* Red */
+.acand-avatar.color-5 { background: #f3f4f6; color: #1f2937; } /* Gray */
+
+.acand-candidate-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.acand-name {
+  font-weight: 600;
+  color: var(--navy-primary);
+  font-size: 0.95rem;
+}
+
+.acand-contact {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.acand-contact svg {
+  color: var(--text-muted);
+}
+
+/* Job Position & Source */
+.acand-job-position, .acand-source {
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+/* Date */
+.acand-date {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  color: var(--text-color);
+}
+.acand-time {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Badges */
+.acand-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.acand-badge.status-new {
+  background: #eff6ff;
+  color: #3b82f6;
+}
+
+.acand-badge.status-reviewing {
+  background: #fefce8;
+  color: #eab308;
+}
+
+.acand-badge.status-interviewed {
+  background: #f0fdf4;
+  color: #22c55e;
+}
+
+.acand-badge.status-rejected {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+/* Row Actions */
+.acand-row-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.acand-btn-action {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: white;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.acand-btn-action:hover {
+  background: #f8fafc;
+  color: var(--navy-primary);
+  border-color: #cbd5e1;
+}
+
+/* Pagination Footer */
+.acand-pagination-footer {
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border-color);
+  background: white;
+}
+
+.acand-pagination-info {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.acand-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.acand-page-list {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.acand-page-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color);
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  transition: all 0.2s;
+}
+
+.acand-page-btn:not(:disabled):hover {
+  background: #f8fafc;
+  color: var(--navy-primary);
+}
+
+.acand-page-btn.active {
+  background: var(--navy-primary);
+  color: white;
+  border-color: var(--navy-primary);
+}
+
+.acand-page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.acand-page-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  color: var(--text-muted);
+}
+
+.acand-page-select {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.acand-page-select select {
+  padding: 0.4rem 2rem 0.4rem 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: white;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+}
+
+@media (max-width: 1024px) {
+  .acand-stats-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .acand-stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .acand-toolbar-left {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .acand-search-box {
+    width: 100%;
+  }
+  
+  .acand-filters {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .acand-stats-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Modals */
+.acand-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(11, 34, 79, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  backdrop-filter: blur(4px);
+}
+
+.acand-modal-content {
+  background: white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: acandModalSlideIn 0.3s ease-out;
+}
+
+@keyframes acandModalSlideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.acand-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.acand-modal-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--navy-primary);
+  font-weight: 700;
+}
+
+.acand-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.acand-close-btn:hover {
+  background: #f1f5f9;
+  color: #ef4444;
+}
+
+.acand-modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  max-height: 70vh;
+}
+
+.acand-modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  background: #f8fafc;
+}
+
+.acand-btn-cancel {
+  padding: 0.6rem 1.25rem;
+  border: 1px solid var(--border-color);
+  background: white;
+  color: var(--text-color);
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.acand-btn-cancel:hover {
+  background: #f1f5f9;
+}
+
+/* Status buttons in modal */
+.acand-status-btn {
+  width: 100%;
+  padding: 0.85rem 1.25rem;
+  text-align: left;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: white;
+  color: var(--navy-primary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.acand-status-btn:hover {
+  border-color: var(--gold-accent);
+  background: #fdfbf7;
+}
+
+.acand-status-btn.active {
+  background: var(--gold-accent);
+  color: white;
+  border-color: var(--gold-accent);
+  box-shadow: 0 4px 6px rgba(216, 159, 42, 0.2);
+}
+
+/* CV Document styling */
+.acand-cv-doc {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+.acand-cv-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: #fee2e2;
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.acand-cv-info {
+  flex: 1;
+}
+
+.acand-cv-name {
+  font-weight: 600;
+  color: var(--navy-primary);
+  font-size: 0.9rem;
+  margin-bottom: 0.15rem;
+}
+
+.acand-cv-size {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.acand-cv-download {
+  color: var(--gold-accent);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.acand-cv-download:hover {
+  background: #fef3c7;
+}

@@ -1,0 +1,365 @@
+.admin-login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #F7F3EC;
+  background-image: 
+    radial-gradient(circle at top left, rgba(212, 160, 23, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at bottom right, rgba(212, 160, 23, 0.05) 0%, transparent 40%);
+  padding: 2rem;
+  font-family: var(--font-body);
+}
+
+.admin-login-container {
+  display: flex;
+  width: 100%;
+  max-width: 1000px;
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  min-height: 600px;
+}
+
+/* Left Banner */
+.al-left-banner {
+  flex: 1;
+  position: relative;
+  background-image: url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=1000&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: flex-start;
+  padding: 4rem 3rem;
+  color: white;
+}
+
+.al-banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to right, rgba(23, 58, 106, 0.9) 0%, rgba(23, 58, 106, 0.4) 100%);
+}
+
+.al-banner-content {
+  position: relative;
+  z-index: 1;
+}
+
+.al-banner-content h2 {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+.al-banner-divider {
+  width: 40px;
+  height: 3px;
+  background-color: #D4A017;
+  margin-bottom: 1.5rem;
+}
+
+.al-company-name {
+  color: #D4A017;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+}
+
+.al-company-desc {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+}
+
+/* Right Form */
+.al-right-form {
+  flex: 1;
+  padding: 3rem 4rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: #ffffff;
+}
+
+.al-version-badge {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(212, 160, 23, 0.1);
+  color: #D4A017;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.al-logo-container {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.al-logo-text {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #173A6A;
+  line-height: 1;
+  margin-bottom: 0.2rem;
+}
+
+.al-logo-text span {
+  color: #D4A017;
+}
+
+.al-logo-sub {
+  color: #D4A017;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+}
+
+.al-form-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.al-form-header h3 {
+  color: #173A6A;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  text-transform: uppercase;
+}
+
+.al-header-divider {
+  width: 60px;
+  height: 2px;
+  background-color: #D4A017;
+  margin: 0 auto;
+  position: relative;
+}
+.al-header-divider::before {
+  content: '◆';
+  color: #D4A017;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.8rem;
+  background: #fff;
+  padding: 0 4px;
+}
+
+.al-input-group {
+  margin-bottom: 1.25rem;
+}
+
+.al-input-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #173A6A;
+  margin-bottom: 0.5rem;
+}
+
+.al-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.al-input-icon {
+  position: absolute;
+  left: 1rem;
+  color: #D4A017;
+}
+
+.al-input-wrapper input {
+  width: 100%;
+  padding: 0.8rem 1rem 0.8rem 2.8rem;
+  border: 1px solid #E6DDD0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #173A6A;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.al-input-wrapper input:focus {
+  border-color: #D4A017;
+  box-shadow: 0 0 0 3px rgba(212, 160, 23, 0.1);
+}
+
+.al-eye-btn {
+  position: absolute;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: #7A869A;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.al-eye-btn:hover {
+  color: #173A6A;
+}
+
+.al-form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  font-size: 0.85rem;
+}
+
+.al-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #173A6A;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.al-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 1px solid #E6DDD0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.al-checkbox.checked {
+  background: #D4A017;
+  border-color: #D4A017;
+}
+
+.al-forgot-link {
+  color: #D4A017;
+  font-weight: 500;
+}
+
+.al-forgot-link:hover {
+  text-decoration: underline;
+}
+
+.al-submit-btn {
+  width: 100%;
+  padding: 1rem;
+  background: #D4A017;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 1.5rem;
+}
+
+.al-submit-btn:hover {
+  background: #C69214;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212, 160, 23, 0.2);
+}
+
+.al-divider-text {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #7A869A;
+  font-size: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.al-divider-text::before,
+.al-divider-text::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #E6DDD0;
+}
+
+.al-divider-text span {
+  padding: 0 1rem;
+}
+
+.al-sso-btn {
+  width: 100%;
+  padding: 0.8rem;
+  background: transparent;
+  color: #173A6A;
+  border: 1px solid #E6DDD0;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 2rem;
+}
+
+.al-sso-btn:hover {
+  border-color: #173A6A;
+  background: #f8f9fa;
+}
+
+.al-footer-info {
+  margin-top: auto;
+  text-align: center;
+  color: #7A869A;
+  font-size: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.al-error-message {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  border: 1px solid #fca5a5;
+}
+
+@media (max-width: 768px) {
+  .admin-login-container {
+    flex-direction: column;
+    min-height: auto;
+  }
+  .al-left-banner {
+    padding: 3rem 2rem;
+    min-height: 200px;
+  }
+  .al-right-form {
+    padding: 2.5rem 2rem;
+  }
+}
