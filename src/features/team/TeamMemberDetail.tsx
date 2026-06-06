@@ -16,51 +16,43 @@ const ZaloIcon = ({ size = 16, className = "" }: { size?: number, className?: st
   </svg>
 );
 
-import './TeamMemberDetail.css';
-
-interface TeamMemberDetailProps {
-  onBack: () => void;
-  memberId?: number;
-}
-
-const mockTeamMembers = [
-  {
-    name: 'Nguyễn Văn A',
-    role: 'Giám đốc điều hành',
-    bio: 'Hơn 15 năm kinh nghiệm trong lĩnh vực đầu tư và phát triển bất động sản. Ông Nguyễn Văn A là người dẫn dắt chiến lược phát triển dài hạn của An Khang Group, định hướng xây dựng những giá trị bền vững và nâng tầm chuẩn sống cho cộng đồng.',
-    email: 'nguyenvana@ankhanggroup.vn',
-    image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop',
-    fb: 'facebook.com/nguyenvana'
-  },
-  {
-    name: 'Trần Thị B',
-    role: 'Giám đốc kinh doanh',
-    bio: 'Chuyên gia tư vấn và phát triển thị trường với mạng lưới đối tác rộng khắp. Bà Trần Thị B đóng vai trò chủ chốt trong việc xây dựng chiến lược bán hàng, quản lý mạng lưới đại lý và đào tạo đội ngũ chuyên viên tư vấn chuyên nghiệp.',
-    email: 'tranthib@ankhanggroup.vn',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop',
-    fb: 'facebook.com/tranthib'
-  },
-  {
-    name: 'Lê Văn C',
-    role: 'Giám đốc dự án',
-    bio: 'Kinh nghiệm triển khai và quản lý nhiều dự án bất động sản quy mô lớn. Ông Lê Văn C chịu trách nhiệm giám sát toàn bộ quá trình phát triển dự án từ giai đoạn thiết kế, thi công đến khi bàn giao, đảm bảo chất lượng và tiến độ.',
-    email: 'levanc@ankhanggroup.vn',
-    image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=800&auto=format&fit=crop',
-    fb: 'facebook.com/levanc'
-  },
-  {
-    name: 'Phạm Thị D',
-    role: 'Giám đốc marketing',
-    bio: 'Sáng tạo chiến lược thương hiệu, nâng tầm giá trị sản phẩm trên thị trường. Bà Phạm Thị D phụ trách xây dựng và triển khai các chiến dịch truyền thông đa kênh, thúc đẩy nhận diện thương hiệu An Khang Group và các dự án trọng điểm.',
-    email: 'phamthid@ankhanggroup.vn',
-    image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=800&auto=format&fit=crop',
-    fb: 'facebook.com/phamthid'
-  }
-];
+import { membersAPI } from '../lib/api';
 
 export default function TeamMemberDetail({ onBack, memberId }: TeamMemberDetailProps) {
   const [activeTab, setActiveTab] = useState('tieusu');
-  const member = mockTeamMembers[memberId !== undefined ? memberId : 0] || mockTeamMembers[0];
+  const [member, setMember] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  React.useEffect(() => {
+    const fetchMember = async () => {
+      try {
+        setIsLoading(true);
+        const allMembers = await membersAPI.getAll();
+        const found = allMembers.find((m: any) => m.id === memberId);
+        setMember(found || null);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    if (memberId !== undefined) {
+      fetchMember();
+    }
+  }, [memberId]);
+
+  if (isLoading) {
+    return <div style={{ padding: '4rem', textAlign: 'center', color: '#fff' }}>Đang tải thông tin...</div>;
+  }
+
+  if (!member) {
+    return (
+      <div style={{ padding: '4rem', textAlign: 'center', color: '#fff' }}>
+        <h2>Không tìm thấy thành viên</h2>
+        <button onClick={onBack} style={{ marginTop: '1rem', padding: '0.5rem 1rem' }}>Quay lại</button>
+      </div>
+    );
+  }
 
   return (
     <div className="team-detail-page">
@@ -87,7 +79,7 @@ export default function TeamMemberDetail({ onBack, memberId }: TeamMemberDetailP
           {/* LEFT: Image */}
           <div className="td-profile-image-col">
             <img 
-              src={member.image} 
+              src={member.avatar || 'https://placehold.co/800x800?text=No+Image'} 
               alt={member.name} 
               className="td-main-img" 
             />
@@ -96,10 +88,10 @@ export default function TeamMemberDetail({ onBack, memberId }: TeamMemberDetailP
           {/* RIGHT: Info */}
           <div className="td-profile-info-col">
             <h1 className="td-name">{member.name}</h1>
-            <div className="td-role-badge">{member.role}</div>
+            <div className="td-role-badge">{member.position}</div>
             
             <p className="td-bio-short">
-              {member.bio}
+              {member.description || 'Chưa có tiểu sử.'}
             </p>
 
             <div className="td-contact-list">
@@ -116,10 +108,12 @@ export default function TeamMemberDetail({ onBack, memberId }: TeamMemberDetailP
                 <span style={{ marginLeft: '2px' }}>0909 123 456</span>
               </div>
               <div className="td-contact-item">
-                <a href={`https://${member.fb}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'inherit', textDecoration: 'none' }}>
+                {member.facebook && (
+                <a href={member.facebook.startsWith('http') ? member.facebook : `https://${member.facebook}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'inherit', textDecoration: 'none' }}>
                   <FacebookIcon size={16} className="text-muted" />
-                  <span>{member.fb}</span>
+                  <span>{member.facebook}</span>
                 </a>
+                )}
               </div>
             </div>
           </div>
@@ -155,13 +149,7 @@ export default function TeamMemberDetail({ onBack, memberId }: TeamMemberDetailP
               {activeTab === 'tieusu' && (
                 <>
                   <p>
-                    {member.bio}
-                  </p>
-                  <p>
-                    Trước khi gia nhập An Khang Group, {member.name.split(' ').pop()} đã có nhiều năm kinh nghiệm làm việc trong lĩnh vực chuyên môn, góp phần xây dựng nền tảng vững chắc và định hình sự phát triển cho nhiều dự án và chiến lược quan trọng.
-                  </p>
-                  <p>
-                    Với tầm nhìn chiến lược và tinh thần nhiệt huyết, {member.name.split(' ').pop()} không ngừng nỗ lực cùng Ban lãnh đạo An Khang Group kiến tạo những giá trị bền vững cho khách hàng và cộng đồng.
+                    {member.description || 'Chưa có tiểu sử.'}
                   </p>
                 </>
               )}
