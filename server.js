@@ -5,7 +5,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import xss from 'xss-clean';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,8 +31,8 @@ app.use(helmet({
   crossOriginResourcePolicy: false, // Để cho phép tải ảnh qua CDN/Proxy nếu cần
 }));
 
-// XSS Protection
-app.use(xss());
+// XSS Protection (Bỏ qua xss-clean vì lỗi với Express 5, React đã tự chống XSS)
+// app.use(xss());
 
 // CORS configuration
 const allowedOrigins = [
