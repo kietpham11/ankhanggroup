@@ -1,17 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   MapPin, Phone, Mail, Clock, Send,
   ChevronDown, Navigation, ShieldCheck
 } from 'lucide-react';
 import './Contact.css';
 import FAQ from '../components/shared/FAQ';
-import { contactsAPI } from '../lib/api';
+import { contactsAPI, settingsAPI } from '../lib/api';
 
-export default function Contact() {
+export default function Contact({ banner }: { banner?: string }) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [contactData, setContactData] = useState({
+    phone: '0985 943 567',
+    email: 'ankhanggroup.realestate@gmail.com',
+    address: '460 Đường Đồng Khởi, phường, Tam Hiệp, Đồng Nai .',
+    hours: 'Thứ 2 - Thứ 6: 08:00 - 17:30\nThứ 7 : 09:00 - 12:00',
+    facebook: 'https://www.facebook.com/profile.php?id=61586613410937',
+    tiktok: 'https://www.tiktok.com/@bds.ankhanggroup',
+    zalo: 'https://zalo.me/0985943567'
+  });
+
+  useEffect(() => {
+    settingsAPI.get('CONTACT')
+      .then(res => {
+        if (res && res.value) {
+          setContactData(res.value);
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +58,7 @@ export default function Contact() {
   return (
     <div className="contact-page">
       {/* HEADER HERO */}
-      <div className="contact-header-bg">
+      <div className="contact-header-bg" style={banner ? { backgroundImage: `url(${banner})` } : {}}>
         <div className="contact-container">
           <div className="breadcrumb">Trang chủ <span className="mx-2">&gt;</span> <span className="text-gold">Liên hệ</span></div>
           <h1 className="page-title">Liên hệ với chúng tôi</h1>
@@ -119,7 +139,7 @@ export default function Contact() {
                 </div>
                 <div className="info-text">
                   <h4>Địa chỉ</h4>
-                  <p>460 Đường Đồng Khởi, phường, Tam Hiệp, Đồng Nai .</p>
+                  <p>{contactData.address}</p>
                 </div>
               </div>
 
@@ -129,7 +149,7 @@ export default function Contact() {
                 </div>
                 <div className="info-text">
                   <h4>Hotline</h4>
-                  <p className="highlight">0985 943 567</p>
+                  <p className="highlight">{contactData.phone}</p>
                   <span className="sub-text">(08:00 - 17:30 tất cả các ngày trong tuần)</span>
                 </div>
               </div>
@@ -140,7 +160,7 @@ export default function Contact() {
                 </div>
                 <div className="info-text">
                   <h4>Email</h4>
-                  <p>ankhanggroup.realestate@gmail.com</p>
+                  <p>{contactData.email}</p>
                 </div>
               </div>
 
@@ -150,8 +170,9 @@ export default function Contact() {
                 </div>
                 <div className="info-text">
                   <h4>Giờ làm việc</h4>
-                  <p>Thứ 2 - Thứ 6: 08:00 - 17:30</p>
-                  <p>Thứ 7 : 09:00 - 12:00</p>
+                  {contactData.hours.split('\n').map((line, idx) => (
+                    <p key={idx}>{line}</p>
+                  ))}
                 </div>
               </div>
             </div>
@@ -159,12 +180,12 @@ export default function Contact() {
             <div className="social-connect">
               <h4>Kết nối với chúng tôi</h4>
               <div className="social-icons">
-                <a href="https://www.facebook.com/profile.php?id=61586613410937" target="_blank" rel="noopener noreferrer" className="social-icon facebook">
+                <a href={contactData.facebook} target="_blank" rel="noopener noreferrer" className="social-icon facebook">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
                 </a>
-                <a href="#" className="social-icon zalo">Zalo</a>
+                <a href={contactData.zalo} target="_blank" rel="noopener noreferrer" className="social-icon zalo">Zalo</a>
 
-                <a href="https://www.tiktok.com/@bds.ankhanggroup" target="_blank" rel="noopener noreferrer" className="social-icon tiktok">
+                <a href={contactData.tiktok} target="_blank" rel="noopener noreferrer" className="social-icon tiktok">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 15.68a6.34 6.34 0 0 0 6.27 6.34 6.32 6.32 0 0 0 6.27-6.34V11.5a8.21 8.21 0 0 0 2.05.26z" /></svg>
                 </a>
               </div>

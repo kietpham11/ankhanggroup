@@ -55,6 +55,11 @@ export default function Projects() {
         description: p.description,
         area: p.area,
         price: p.price,
+        legal: p.legal,
+        projectId: p.projectId,
+        isFeatured: p.isFeatured,
+        showOnHome: p.showOnHome,
+        displayOrder: p.displayOrder,
       }));
       setProjects(mapped);
     } catch (err) {

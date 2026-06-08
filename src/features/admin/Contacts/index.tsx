@@ -47,9 +47,9 @@ export default function Contacts() {
       const data = await contactsAPI.getAll();
       const mapped = data.map((c: any) => {
         const uiStatus = mapStatusToUI(c.status);
-        const nameParts = (c.name || '').split(' ');
+        const nameParts = (c.name || '').trim().split(/\s+/);
         const initials = nameParts.length > 1 
-          ? nameParts[0][0] + nameParts[nameParts.length - 1][0] 
+          ? (nameParts[0]?.[0] || '') + (nameParts[nameParts.length - 1]?.[0] || '')
           : (nameParts[0]?.[0] || 'U');
         return {
           id: c.id,

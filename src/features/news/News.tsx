@@ -6,7 +6,7 @@ import {
 import { postsAPI, contactsAPI } from '../../lib/api';
 import './News.css';
 
-export default function News({ onViewDetail }: { onViewDetail?: (id: number | string) => void }) {
+export default function News({ onViewDetail, banner }: { onViewDetail?: (id: number | string) => void, banner?: string }) {
   const [activeCategory, setActiveCategory] = useState<any>({ id: 'all', name: 'Tất cả' });
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -143,7 +143,7 @@ export default function News({ onViewDetail }: { onViewDetail?: (id: number | st
   return (
     <div className="news-page">
       {/* HEADER HERO */}
-      <div className="news-header-bg">
+      <div className="news-header-bg" style={banner ? { backgroundImage: `url(${banner})` } : {}}>
         <div className="news-container">
           <div className="breadcrumb">Trang chủ <span className="mx-2">&gt;</span> <span className="text-gold">Tin tức</span></div>
           <h1 className="page-title">Tin tức</h1>

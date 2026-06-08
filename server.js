@@ -3,6 +3,9 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import xss from 'xss-clean';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,6 +19,7 @@ import contactRoutes from './server/routes/contacts.js';
 import dashboardRoutes from './server/routes/dashboard.js';
 import memberRoutes from './server/routes/members.js';
 import jobRoutes from './server/routes/jobs.js';
+import settingsRoutes from './server/routes/settings.js';
 
 dotenv.config();
 
@@ -23,12 +27,32 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ====================== MIDDLEWARE ======================
+// Security HTTP headers
+app.use(helmet({
+  crossOriginResourcePolicy: false, // Để cho phép tải ảnh qua CDN/Proxy nếu cần
+}));
+
+// XSS Protection
+app.use(xss());
+
+// CORS configuration
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:5173',
   credentials: true,
 }));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
+
+// Rate limiting (chống spam / DDoS nhẹ)
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 phút
+  max: 200, // Tối đa 200 request mỗi IP mỗi 15 phút
+  message: { error: 'Bạn đã gửi quá nhiều yêu cầu, vui lòng thử lại sau 15 phút.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api', limiter); // Chỉ áp dụng giới hạn cho các API
+
+app.use(express.json({ limit: '10mb' })); // Giới hạn dung lượng body
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Serve static files from uploads folder
 app.use('/uploads', express.static(path.join(__dirname, 'server/uploads')));
@@ -42,6 +66,7 @@ app.use('/api/contacts',    contactRoutes);
 app.use('/api/dashboard',   dashboardRoutes);
 app.use('/api/members',     memberRoutes);
 app.use('/api/jobs',        jobRoutes);
+app.use('/api/settings',    settingsRoutes);
 
 // ====================== HEALTH CHECK ======================
 app.get('/api/health', (req, res) => {

@@ -68,6 +68,8 @@ model Property {
   status      String          @default("AVAILABLE")
   views       Int             @default(0)
   isFeatured  Boolean         @default(false)
+  showOnHome  Boolean         @default(false)
+  displayOrder Int            @default(0)
   legal       String?
   facades     Float?
   bedrooms    Int?

@@ -12,7 +12,7 @@ export default function AddMemberModal({ onClose, onSave }: AddMemberModalProps)
     name: '',
     position: '',
     email: '',
-    description: '',
+    description: 'Chuyên gia tư vấn và phát triển thị trường với mạng lưới đối tác rộng khắp. Bà đóng vai trò chủ chốt trong việc xây dựng chiến lược bán hàng, quản lý mạng lưới đại lý và đào tạo đội ngũ chuyên viên tư vấn chuyên nghiệp.',
     orderIndex: 0,
     avatar: '',
     facebook: '',

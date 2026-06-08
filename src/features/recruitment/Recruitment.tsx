@@ -8,7 +8,7 @@ import {
 import './Recruitment.css';
 import { jobsAPI, candidatesAPI } from '../../lib/api';
 
-export default function Recruitment({ onViewDetail }: { onViewDetail?: (id: number) => void }) {
+export default function Recruitment({ onViewDetail, banner }: { onViewDetail?: (id: number) => void, banner?: string }) {
   const [jobs, setJobs] = React.useState<any[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -61,7 +61,7 @@ export default function Recruitment({ onViewDetail }: { onViewDetail?: (id: numb
   return (
     <div className="recruitment-page">
       {/* HERO SECTION */}
-      <section className="recruitment-hero">
+      <section className="recruitment-hero" style={banner ? { backgroundImage: `url(${banner})` } : {}}>
         <div className="recruitment-container">
           <div className="breadcrumb">Trang chủ &gt; Tuyển dụng</div>
           <h1 className="hero-title">

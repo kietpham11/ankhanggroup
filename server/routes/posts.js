@@ -7,10 +7,15 @@ import fs from 'fs';
 
 const router = express.Router();
 
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // Setup Multer for post thumbnail uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadDir = 'uploads/posts/';
+    const uploadDir = path.join(__dirname, '../uploads/posts/');
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
@@ -150,6 +155,69 @@ router.delete('/:id', adminMiddleware, async (req, res) => {
     res.json({ message: 'Đã xoá bài viết.' });
   } catch (error) {
     res.status(500).json({ error: 'Lỗi khi xoá bài viết.' });
+  }
+});
+
+// POST /api/posts/categories - Thêm danh mục (Admin)
+router.post('/categories', adminMiddleware, async (req, res) => {
+  try {
+    const { name, description } = req.body;
+    if (!name) return res.status(400).json({ error: 'Tên danh mục là bắt buộc.' });
+    const slug = name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]/g, '');
+    
+    // Check if slug exists
+    const existing = await prisma.category.findUnique({ where: { slug } });
+    if (existing) {
+      return res.status(400).json({ error: 'Danh mục này đã tồn tại.' });
+    }
+
+    const category = await prisma.category.create({
+      data: { name, slug, description }
+    });
+    res.status(201).json(category);
+  } catch (error) {
+    res.status(500).json({ error: 'Lỗi khi tạo danh mục.' });
+  }
+});
+
+// PUT /api/posts/categories/:id - Sửa danh mục (Admin)
+router.put('/categories/:id', adminMiddleware, async (req, res) => {
+  try {
+    const { name, description } = req.body;
+    const updateData = {};
+    if (name) {
+      updateData.name = name;
+      updateData.slug = name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]/g, '');
+    }
+    if (description !== undefined) updateData.description = description;
+
+    const category = await prisma.category.update({
+      where: { id: parseInt(req.params.id) },
+      data: updateData
+    });
+    res.json(category);
+  } catch (error) {
+    res.status(500).json({ error: 'Lỗi khi cập nhật danh mục.' });
+  }
+});
+
+// DELETE /api/posts/categories/:id - Xoá danh mục (Admin)
+router.delete('/categories/:id', adminMiddleware, async (req, res) => {
+  try {
+    // Check if category has posts
+    const category = await prisma.category.findUnique({
+      where: { id: parseInt(req.params.id) },
+      include: { _count: { select: { posts: true } } }
+    });
+    
+    if (category && category._count.posts > 0) {
+      return res.status(400).json({ error: 'Không thể xoá danh mục đang có bài viết.' });
+    }
+
+    await prisma.category.delete({ where: { id: parseInt(req.params.id) } });
+    res.json({ message: 'Đã xoá danh mục.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Lỗi khi xoá danh mục.' });
   }
 });
 

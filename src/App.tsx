@@ -58,12 +58,44 @@ function App() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [banners, setBanners] = useState<any>({
+    home: [
+      "/images/banner1.png",
+      "/images/banner2.png",
+      "/images/banner3.png"
+    ],
+    news: '',
+    projects: '',
+    recruitment: '',
+    about: '',
+    contact: ''
+  });
 
   useEffect(() => {
     propertiesAPI.getAll()
       .then(setProperties)
       .catch(console.error)
       .finally(() => setIsLoading(false));
+
+    // Fetch banners
+    import('./lib/api').then(({ settingsAPI, getFullImgUrl }) => {
+      settingsAPI.get('BANNERS')
+        .then((res: any) => {
+          if (res && res.value) {
+            const val = res.value;
+            setBanners((prev: any) => ({
+              ...prev,
+              home: val.home && val.home.length > 0 ? val.home.map((u: string) => getFullImgUrl(u)) : prev.home,
+              news: getFullImgUrl(val.news) || prev.news,
+              projects: getFullImgUrl(val.projects) || prev.projects,
+              recruitment: getFullImgUrl(val.recruitment) || prev.recruitment,
+              about: getFullImgUrl(val.about) || prev.about,
+              contact: getFullImgUrl(val.contact) || prev.contact,
+            }));
+          }
+        })
+        .catch(console.error);
+    });
 
     // Handle browser back button (PopState)
     const handlePopState = (event: PopStateEvent) => {
@@ -156,6 +188,7 @@ function App() {
 
       {currentView === 'home' && (
         <HomeView 
+          banners={banners.home}
           onViewDetail={(id) => {
             setCurrentProjectId(id);
             setCurrentView('project_detail');
@@ -165,7 +198,7 @@ function App() {
       )}
 
       {currentView === 'projects' && (
-        <Projects onViewDetail={(id) => {
+        <Projects banner={banners.projects} onViewDetail={(id) => {
           setCurrentProjectId(id);
           setCurrentView('project_detail');
         }} />
@@ -179,7 +212,7 @@ function App() {
       )}
 
       {currentView === 'news' && (
-        <News onViewDetail={(id) => {
+        <News banner={banners.news} onViewDetail={(id) => {
           setCurrentNewsId(id);
           setCurrentView('news_detail');
         }} />
@@ -193,7 +226,7 @@ function App() {
       )}
 
       {currentView === 'recruitment' && (
-        <Recruitment onViewDetail={(id) => {
+        <Recruitment banner={banners.recruitment} onViewDetail={(id) => {
           setCurrentJobId(id);
           setCurrentView('job_detail');
         }} />
@@ -208,7 +241,7 @@ function App() {
 
       {/* ABOUT US SECTION */}
       {currentView === 'about' && (
-        <About onViewTeamMember={(id) => {
+        <About banner={banners.about} onViewTeamMember={(id) => {
           setCurrentTeamMemberId(id);
           setCurrentView('team_detail');
         }} />
@@ -223,7 +256,7 @@ function App() {
 
       {/* CONTACT SECTION */}
       {currentView === 'contact' && (
-        <Contact />
+        <Contact banner={banners.contact} />
       )}
 
       <Footer />

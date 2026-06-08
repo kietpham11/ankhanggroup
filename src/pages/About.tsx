@@ -49,7 +49,7 @@ const coreValues = [
 
 // Removed static teamMembers
 
-export default function About({ onViewTeamMember }: { onViewTeamMember?: (id: number) => void }) {
+export default function About({ onViewTeamMember, banner }: { onViewTeamMember?: (id: number) => void, banner?: string }) {
   const [bgIndex, setBgIndex] = useState(0);
   const [teamMembers, setTeamMembers] = useState<any[]>([]);
   
@@ -58,6 +58,7 @@ export default function About({ onViewTeamMember }: { onViewTeamMember?: (id: nu
     "/images/banner2.png",
     "/images/banner3.png"
   ];
+  const displayBanners = banner ? [banner] : bgImages;
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -72,15 +73,15 @@ export default function About({ onViewTeamMember }: { onViewTeamMember?: (id: nu
     
     fetchMembers();
     const timer = setInterval(() => {
-      setBgIndex((prev) => (prev + 1) % bgImages.length);
+      setBgIndex((prev) => (prev + 1) % displayBanners.length);
     }, 4000);
     return () => clearInterval(timer);
-  }, []);
+  }, [banner]);
 
   return (
     <div className="about-page">
       <div className="about-top-bg">
-        {bgImages.map((img, idx) => (
+        {displayBanners.map((img, idx) => (
           <div 
             key={idx}
             className={`about-bg-slide ${idx === bgIndex ? 'active' : ''}`}
@@ -205,9 +206,9 @@ export default function About({ onViewTeamMember }: { onViewTeamMember?: (id: nu
                 <span className="about-team-role">{m.position}</span>
                 <p className="about-team-desc">{m.description}</p>
                 <div className="about-team-socials">
-                  <a href={m.facebook || '#'} target="_blank" rel="noreferrer" aria-label="Facebook" onClick={(e) => { e.stopPropagation(); if (!m.facebook) e.preventDefault(); }}><FacebookIcon /></a>
-                  <a href={m.zalo || '#'} target="_blank" rel="noreferrer" aria-label="Zalo" onClick={(e) => { e.stopPropagation(); if (!m.zalo) e.preventDefault(); }}><ZaloIcon /></a>
-                  <a href={m.tiktok || '#'} target="_blank" rel="noreferrer" aria-label="Tiktok" onClick={(e) => { e.stopPropagation(); if (!m.tiktok) e.preventDefault(); }}><TiktokIcon /></a>
+                  <a href={m.facebook ? (m.facebook.startsWith('http') ? m.facebook : `https://${m.facebook}`) : '#'} target="_blank" rel="noreferrer" aria-label="Facebook" onClick={(e) => { e.stopPropagation(); if (!m.facebook) e.preventDefault(); }}><FacebookIcon /></a>
+                  <a href={m.zalo ? (m.zalo.startsWith('http') ? m.zalo : `https://${m.zalo}`) : '#'} target="_blank" rel="noreferrer" aria-label="Zalo" onClick={(e) => { e.stopPropagation(); if (!m.zalo) e.preventDefault(); }}><ZaloIcon /></a>
+                  <a href={m.tiktok ? (m.tiktok.startsWith('http') ? m.tiktok : `https://${m.tiktok}`) : '#'} target="_blank" rel="noreferrer" aria-label="Tiktok" onClick={(e) => { e.stopPropagation(); if (!m.tiktok) e.preventDefault(); }}><TiktokIcon /></a>
                 </div>
               </div>
             </div>

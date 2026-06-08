@@ -7,11 +7,12 @@ const router = express.Router();
 // GET /api/properties - Lấy danh sách BĐS (có filter)
 router.get('/', async (req, res) => {
   try {
-    const { type, status, minPrice, maxPrice, minArea, maxArea, search } = req.query;
+    const { type, status, minPrice, maxPrice, minArea, maxArea, search, showOnHome } = req.query;
     
     const where = {};
     if (type) where.type = type;
     if (status) where.status = status;
+    if (showOnHome === 'true') where.showOnHome = true;
     if (search) {
       where.OR = [
         { title: { contains: search } },
@@ -32,7 +33,11 @@ router.get('/', async (req, res) => {
     const properties = await prisma.property.findMany({
       where,
       include: { images: true, project: { select: { name: true } } },
-      orderBy: { createdAt: 'desc' },
+      orderBy: [
+        { isFeatured: 'desc' },
+        { displayOrder: 'asc' },
+        { createdAt: 'desc' }
+      ],
     });
     res.json(properties);
   } catch (error) {
@@ -85,6 +90,8 @@ router.post('/', adminMiddleware, async (req, res) => {
         direction, mapImage, legal,
         projectId: projectId ? parseInt(projectId) : null,
         status: 'AVAILABLE',
+        showOnHome: req.body.showOnHome || false,
+        displayOrder: req.body.displayOrder ? parseInt(req.body.displayOrder) : 0,
         images: images?.length
           ? { create: images.map(url => ({ url })) }
           : undefined,
@@ -105,28 +112,72 @@ router.put('/:id', adminMiddleware, async (req, res) => {
     const {
       title, slug, description, price, area,
       address, type, status, bedrooms, bathrooms, direction, mapImage,
-      legal, projectId
+      legal, projectId, isFeatured, images
     } = req.body;
+
+    const updateData = {
+      title, slug, description,
+      price: price ? parseFloat(price) : undefined,
+      area: area ? parseFloat(area) : undefined,
+      address, type, status,
+      bedrooms: bedrooms ? parseInt(bedrooms) : null,
+      bathrooms: bathrooms ? parseInt(bathrooms) : null,
+      direction, mapImage,
+      legal: legal !== undefined ? legal : undefined,
+      projectId: projectId !== undefined ? (projectId ? parseInt(projectId) : null) : undefined,
+      isFeatured: isFeatured !== undefined ? isFeatured : undefined,
+      showOnHome: req.body.showOnHome !== undefined ? req.body.showOnHome : undefined,
+      displayOrder: req.body.displayOrder !== undefined ? parseInt(req.body.displayOrder) : undefined,
+    };
+
+    if (images && Array.isArray(images)) {
+      updateData.images = {
+        deleteMany: {},
+        create: images.map(url => ({ url }))
+      };
+    }
 
     const property = await prisma.property.update({
       where: { id },
-      data: {
-        title, slug, description,
-        price: price ? parseFloat(price) : undefined,
-        area: area ? parseFloat(area) : undefined,
-        address, type, status,
-        bedrooms: bedrooms ? parseInt(bedrooms) : null,
-        bathrooms: bathrooms ? parseInt(bathrooms) : null,
-        direction, mapImage,
-        legal: legal !== undefined ? legal : undefined,
-        projectId: projectId !== undefined ? (projectId ? parseInt(projectId) : null) : undefined,
-      },
+      data: updateData,
       include: { images: true },
     });
     res.json(property);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Lỗi khi cập nhật BĐS.' });
   }
+});
+
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = path.join(__dirname, '../uploads/properties/');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'property-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+const upload = multer({ storage: storage });
+
+router.post('/upload', adminMiddleware, upload.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'Không có file được upload.' });
+  }
+  res.json({ url: `/uploads/properties/${req.file.filename}` });
 });
 
 // DELETE /api/properties/:id - Xoá BĐS (Admin only)

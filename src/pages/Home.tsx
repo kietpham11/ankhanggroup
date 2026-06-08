@@ -33,35 +33,38 @@ const bannerImages = [
 interface HomeProps {
   onViewDetail?: (id: number) => void;
   onViewAllProjects?: () => void;
+  banners?: string[];
 }
 
-export default function Home({ onViewDetail, onViewAllProjects }: HomeProps) {
+export default function Home({ onViewDetail, onViewAllProjects, banners = [] }: HomeProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [properties, setProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    propertiesAPI.getAll()
+    propertiesAPI.getAll({ showOnHome: 'true' })
       .then(setProperties)
       .catch(console.error)
       .finally(() => setIsLoading(false));
   }, []);
 
+  const displayBanners = banners && banners.length > 0 ? banners : bannerImages;
+
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide(prev => (prev + 1) % bannerImages.length);
+      setCurrentSlide(prev => (prev + 1) % displayBanners.length);
     }, 4000);
     return () => clearInterval(timer);
-  }, []);
+  }, [displayBanners]);
 
-  const nextSlide = () => setCurrentSlide(prev => (prev + 1) % bannerImages.length);
-  const prevSlide = () => setCurrentSlide(prev => (prev - 1 + bannerImages.length) % bannerImages.length);
+  const nextSlide = () => setCurrentSlide(prev => (prev + 1) % displayBanners.length);
+  const prevSlide = () => setCurrentSlide(prev => (prev - 1 + displayBanners.length) % displayBanners.length);
 
   return (
     <>
       {/* HERO SLIDER */}
       <section className="hero-slider">
-        {bannerImages.map((img, index) => (
+        {displayBanners.map((img, index) => (
           <div
             key={index}
             className={`slide ${index === currentSlide ? 'active' : ''}`}
@@ -78,7 +81,7 @@ export default function Home({ onViewDetail, onViewAllProjects }: HomeProps) {
         </button>
 
         <div className="slider-dots">
-          {bannerImages.map((_, index) => (
+          {displayBanners.map((_, index) => (
             <span
               key={index}
               className={`dot ${index === currentSlide ? 'active' : ''}`}

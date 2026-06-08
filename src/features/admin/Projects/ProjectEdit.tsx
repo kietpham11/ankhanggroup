@@ -5,7 +5,8 @@ import {
   AlignLeft, AlignCenter, AlignRight, AlignJustify, Link, Image as ImageIcon, MoreHorizontal, ChevronDown
 } from 'lucide-react';
 import './ProjectEdit.css';
-import { projectsAPI } from '../../../lib/api';
+import './ProjectEdit.css';
+import { projectsAPI, propertiesAPI } from '../../../lib/api';
 
 interface ProjectEditProps {
   project: any;
@@ -33,12 +34,14 @@ export default function ProjectEdit({ project, onBack, onSave }: ProjectEditProp
   const [mainImage, setMainImage] = useState(project.image);
   const [gallery, setGallery] = useState(project.gallery);
   const [mapImage, setMapImage] = useState(project.mapImage || '');
-  const [isFeatured, setIsFeatured] = useState(true);
-  const [showOnHome, setShowOnHome] = useState(true);
+  const [isFeatured, setIsFeatured] = useState(project.isFeatured !== undefined ? project.isFeatured : true);
+  const [showOnHome, setShowOnHome] = useState(project.showOnHome !== undefined ? project.showOnHome : true);
   const [metaDesc, setMetaDesc] = useState("An Khang Riverside – Dự án nhà phố cao cấp ven sông tại Quận 2, TP. Thủ Đức với tiện ích đẳng cấp.");
   const [displayPrice, setDisplayPrice] = useState(
     project.price ? Number(project.price).toLocaleString('vi-VN') : ''
   );
+  const [displayOrder, setDisplayOrder] = useState(project.displayOrder || 1);
+  const [isUploading, setIsUploading] = useState(false);
   
   const editorRef = useRef<HTMLDivElement>(null);
   
@@ -60,21 +63,38 @@ export default function ProjectEdit({ project, onBack, onSave }: ProjectEditProp
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const mapImageInputRef = useRef<HTMLInputElement>(null);
 
-  const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMainImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setMainImage(URL.createObjectURL(e.target.files[0]));
+      try {
+        setIsUploading(true);
+        const res = await propertiesAPI.uploadImage(e.target.files[0]);
+        setMainImage(res.url);
+      } catch (err: any) {
+        alert(err.message || 'Lỗi upload ảnh chính');
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
-  const handleGalleryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleGalleryChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
       if (gallery.length + files.length > 5) {
         alert('Bạn chỉ có thể chọn tối đa 5 ảnh phụ!');
         return;
       }
-      const newUrls = files.map(f => URL.createObjectURL(f));
-      setGallery([...gallery, ...newUrls]);
+      try {
+        setIsUploading(true);
+        const uploadPromises = files.map(f => propertiesAPI.uploadImage(f));
+        const results = await Promise.all(uploadPromises);
+        const newUrls = results.map(r => r.url);
+        setGallery([...gallery, ...newUrls]);
+      } catch (err: any) {
+        alert(err.message || 'Lỗi upload ảnh phụ');
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
@@ -82,9 +102,17 @@ export default function ProjectEdit({ project, onBack, onSave }: ProjectEditProp
     setGallery(gallery.filter((_: string, i: number) => i !== index));
   };
 
-  const handleMapImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMapImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setMapImage(URL.createObjectURL(e.target.files[0]));
+      try {
+        setIsUploading(true);
+        const res = await propertiesAPI.uploadImage(e.target.files[0]);
+        setMapImage(res.url);
+      } catch (err: any) {
+        alert(err.message || 'Lỗi upload ảnh bản đồ');
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
@@ -105,8 +133,10 @@ export default function ProjectEdit({ project, onBack, onSave }: ProjectEditProp
       description: editorRef.current?.innerHTML || project.description,
       legal: legalRef.current?.value || project.legal || '',
       projectId: projectIdRef.current?.value ? parseInt(projectIdRef.current.value) : (project.projectId || null),
-      image: mainImage,
-      gallery: gallery,
+      isFeatured: isFeatured,
+      showOnHome: showOnHome,
+      displayOrder: displayOrder,
+      images: [mainImage, ...gallery.filter((g: string) => g !== mainImage)].filter(Boolean),
       mapImage: mapImage
     };
     
@@ -126,8 +156,8 @@ export default function ProjectEdit({ project, onBack, onSave }: ProjectEditProp
           <ArrowLeft size={16} /> Quay lại chi tiết
         </button>
         <div className="ape-header-right">
-          <button className="ape-btn-save" onClick={handleSaveBtn}>
-            <Save size={16} /> Lưu thay đổi
+          <button className="ape-btn-save" onClick={handleSaveBtn} disabled={isUploading}>
+            <Save size={16} /> {isUploading ? 'Đang tải lên...' : 'Lưu thay đổi'}
           </button>
         </div>
       </div>
@@ -418,7 +448,7 @@ export default function ProjectEdit({ project, onBack, onSave }: ProjectEditProp
             <div className="ape-meta-group">
               <label>Thứ tự hiển thị</label>
               <div className="ape-input-wrapper">
-                <input type="number" defaultValue="1" min="1" />
+                <input type="number" value={displayOrder} onChange={e => setDisplayOrder(parseInt(e.target.value) || 1)} min="1" />
               </div>
               <div className="ape-input-helper">Số thứ tự nhỏ hơn sẽ hiển thị trước</div>
             </div>
@@ -426,7 +456,7 @@ export default function ProjectEdit({ project, onBack, onSave }: ProjectEditProp
             <div className="ape-meta-group">
               <label>Meta Title</label>
               <div className="ape-input-wrapper">
-                <input type="text" defaultValue="An Khang Riverside – Nhà phố cao cấp ven sông" />
+                <input type="text" defaultValue={project.name || "An Khang Riverside – Nhà phố cao cấp ven sông"} />
               </div>
             </div>
             

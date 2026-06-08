@@ -11,7 +11,7 @@ const TYPE_LABELS: Record<string, string> = {
   LAND: 'Đất nền', HOUSE: 'Nhà phố', APARTMENT: 'Căn hộ'
 };
 
-export default function Projects({ onViewDetail }: { onViewDetail?: (id: number) => void }) {
+export default function Projects({ onViewDetail, banner }: { onViewDetail?: (id: number) => void, banner?: string }) {
   const [projects, setProjects] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -121,7 +121,7 @@ export default function Projects({ onViewDetail }: { onViewDetail?: (id: number)
 
   return (
     <div className="projects-page">
-      <div className="projects-header-bg">
+      <div className="projects-header-bg" style={banner ? { backgroundImage: `url(${banner})` } : {}}>
         <div className="projects-container">
           {/* Breadcrumb & Title */}
           <div className="projects-top-info">

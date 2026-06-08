@@ -16,7 +16,19 @@ const ZaloIcon = ({ size = 16, className = "" }: { size?: number, className?: st
   </svg>
 );
 
-import { membersAPI } from '../lib/api';
+const TiktokIcon = ({ size = 16, className = "" }: { size?: number, className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5v3a8 8 0 0 1-5-1.5v6.5a8 8 0 1 1-8-8v3a5 5 0 0 0 4 5z" />
+  </svg>
+);
+
+import './TeamMemberDetail.css';
+import { membersAPI } from '../../lib/api';
+
+interface TeamMemberDetailProps {
+  onBack: () => void;
+  memberId?: number;
+}
 
 export default function TeamMemberDetail({ onBack, memberId }: TeamMemberDetailProps) {
   const [activeTab, setActiveTab] = useState('tieusu');
@@ -99,22 +111,30 @@ export default function TeamMemberDetail({ onBack, memberId }: TeamMemberDetailP
                 <Mail size={16} className="text-muted" />
                 <span>{member.email}</span>
               </div>
-              <div className="td-contact-item" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <Phone size={16} className="text-muted" />
-                  <span className="text-muted" style={{ fontSize: '0.9em' }}>/</span>
-                  <ZaloIcon size={16} className="text-muted" />
+              {member.zalo && (
+                <div className="td-contact-item" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <a href={member.zalo.startsWith('http') ? member.zalo : `https://${member.zalo}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'inherit', textDecoration: 'none' }}>
+                    <ZaloIcon size={16} className="text-muted" />
+                    <span style={{ marginLeft: '2px' }}>{member.zalo}</span>
+                  </a>
                 </div>
-                <span style={{ marginLeft: '2px' }}>0909 123 456</span>
-              </div>
-              <div className="td-contact-item">
-                {member.facebook && (
-                <a href={member.facebook.startsWith('http') ? member.facebook : `https://${member.facebook}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'inherit', textDecoration: 'none' }}>
-                  <FacebookIcon size={16} className="text-muted" />
-                  <span>{member.facebook}</span>
-                </a>
-                )}
-              </div>
+              )}
+              {member.facebook && (
+                <div className="td-contact-item">
+                  <a href={member.facebook.startsWith('http') ? member.facebook : `https://${member.facebook}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'inherit', textDecoration: 'none' }}>
+                    <FacebookIcon size={16} className="text-muted" />
+                    <span>{member.facebook}</span>
+                  </a>
+                </div>
+              )}
+              {member.tiktok && (
+                <div className="td-contact-item">
+                  <a href={member.tiktok.startsWith('http') ? member.tiktok : `https://${member.tiktok}`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'inherit', textDecoration: 'none' }}>
+                    <TiktokIcon size={16} className="text-muted" />
+                    <span>{member.tiktok}</span>
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -151,6 +171,16 @@ export default function TeamMemberDetail({ onBack, memberId }: TeamMemberDetailP
                   <p>
                     {member.description || 'Chưa có tiểu sử.'}
                   </p>
+                  {member.name && (
+                    <>
+                      <p>
+                        Trước khi gia nhập An Khang Group, {member.name.split(' ').pop()} đã có nhiều năm kinh nghiệm làm việc trong lĩnh vực chuyên môn, góp phần xây dựng nền tảng vững chắc và định hình sự phát triển cho nhiều dự án và chiến lược quan trọng.
+                      </p>
+                      <p>
+                        Với tầm nhìn chiến lược và tinh thần nhiệt huyết, {member.name.split(' ').pop()} không ngừng nỗ lực cùng Ban lãnh đạo An Khang Group kiến tạo những giá trị bền vững cho khách hàng và cộng đồng.
+                      </p>
+                    </>
+                  )}
                 </>
               )}
               {activeTab === 'thanhtuu' && (

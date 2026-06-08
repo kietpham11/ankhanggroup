@@ -4,6 +4,7 @@ import {
   ChevronDown, RefreshCw, Edit, Eye, EyeOff, Trash2, ChevronLeft, ChevronRight 
 } from 'lucide-react';
 import DeletePostModal from './components/DeletePostModal';
+import CategoryModal from './components/CategoryModal';
 import { postsAPI } from '../../../lib/api';
 import './Posts.css';
 
@@ -21,6 +22,7 @@ export default function Posts({ onEdit }: AdminPostsProps) {
   const [categories, setCategories] = useState<any[]>([]);
   const [postToDelete, setPostToDelete] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -169,6 +171,17 @@ export default function Posts({ onEdit }: AdminPostsProps) {
             </select>
             <ChevronDown size={16} />
           </div>
+          <button 
+            onClick={() => setIsCategoryModalOpen(true)}
+            style={{ 
+              background: 'white', color: 'var(--gold-accent)', border: '1px solid var(--gold-accent)', 
+              padding: '0 1rem', borderRadius: '4px', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.9rem', fontWeight: 500,
+              height: '38px', whiteSpace: 'nowrap'
+            }}
+          >
+            <FileText size={16} /> Quản lý danh mục
+          </button>
           <button className="ap-btn-refresh" onClick={() => {
             setCategoryFilter('all');
             setStatusFilter('all');
@@ -302,6 +315,13 @@ export default function Posts({ onEdit }: AdminPostsProps) {
               alert('Xóa thất bại!');
             }
           }}
+        />
+      )}
+
+      {isCategoryModalOpen && (
+        <CategoryModal 
+          onClose={() => setIsCategoryModalOpen(false)}
+          onUpdate={fetchData}
         />
       )}
     </div>
