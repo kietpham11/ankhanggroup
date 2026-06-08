@@ -225,16 +225,7 @@ function Admin() {
             </div>
           </div>
           <div className="header-right">
-            {activePage === 'projects' && (
-              <button style={{ 
-                background: '#d89f2a', color: '#fff', border: 'none', 
-                padding: '0.5rem 1rem', borderRadius: '4px', 
-                display: 'flex', alignItems: 'center', gap: '0.5rem', 
-                cursor: 'pointer', fontWeight: 500, fontSize: '0.9rem'
-              }} onClick={() => setIsAddProjectModalOpen(true)}>
-                <Plus size={16} /> Thêm dự án
-              </button>
-            )}
+            {/* Thêm dự án button moved to Projects feature */}
             {activePage === 'posts' && postView === 'list' && (
               <button style={{ 
                 background: '#d89f2a', color: '#fff', border: 'none', 
@@ -446,16 +437,7 @@ function Admin() {
         )}
       </main>
 
-      {/* Add Project Modal */}
-      {isAddProjectModalOpen && (
-        <AddProjectModal 
-          onClose={() => setIsAddProjectModalOpen(false)} 
-          onSave={() => {
-            alert('Lưu dự án thành công!');
-            setIsAddProjectModalOpen(false);
-          }} 
-        />
-      )}
+      {/* Add Project Modal removed */}
     </div>
   );
 }

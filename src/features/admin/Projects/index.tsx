@@ -7,7 +7,7 @@ import {
 import ProjectDetail from './ProjectDetail';
 import ProjectEdit from './ProjectEdit';
 import DeleteProjectModal from './components/DeleteProjectModal';
-import { propertiesAPI } from '../../../lib/api';
+import { projectsAPI } from '../../../lib/api';
 import './Projects.css';
 
 const parseDateToTime = (dateStr: string) => {
@@ -23,7 +23,7 @@ export default function Projects() {
   const [projects, setProjects] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
-  const [viewMode, setViewMode] = useState<'list' | 'detail' | 'edit'>('list');
+  const [viewMode, setViewMode] = useState<'list' | 'detail' | 'edit' | 'add'>('list');
   const [projectToDelete, setProjectToDelete] = useState<any | null>(null);
 
   // Pagination and Filter State
@@ -38,28 +38,21 @@ export default function Projects() {
   const fetchProperties = async () => {
     setIsLoading(true);
     try {
-      const data = await propertiesAPI.getAll();
+      const data = await projectsAPI.getAll();
       const mapped = data.map((p: any) => ({
         id: p.id,
-        name: p.title,
+        name: p.name,
         code: p.slug,
-        type: p.type === 'LAND' ? 'Đất nền' : (p.type === 'HOUSE' ? 'Nhà phố' : p.type),
-        typeValue: p.type?.toLowerCase() || 'townhouse',
-        location: p.address,
-        status: p.status === 'AVAILABLE' ? 'Đang mở bán' : 'Đã hoàn thành',
-        statusClass: p.status === 'AVAILABLE' ? 'selling' : 'completed',
-        statusValue: p.status === 'AVAILABLE' ? 'selling' : 'completed',
+        slug: p.slug,
+        location: p.location,
+        status: p.status,
+        statusValue: p.status,
         createdAt: new Date(p.createdAt).toLocaleDateString('en-GB'),
         image: p.images?.[0]?.url || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=150&q=80',
-        gallery: p.images?.map((i: any) => i.url) || [],
+        images: p.images?.map((i: any) => i.url) || [],
         description: p.description,
-        area: p.area,
-        price: p.price,
-        legal: p.legal,
-        projectId: p.projectId,
+        content: p.content,
         isFeatured: p.isFeatured,
-        showOnHome: p.showOnHome,
-        displayOrder: p.displayOrder,
       }));
       setProjects(mapped);
     } catch (err) {
@@ -119,10 +112,15 @@ export default function Projects() {
 
   const handleSaveProject = async (updatedProject: any) => {
     try {
-      await propertiesAPI.update(updatedProject.id, updatedProject);
+      if (viewMode === 'add') {
+        await projectsAPI.create(updatedProject);
+        alert('Đã thêm dự án thành công!');
+      } else {
+        await projectsAPI.update(updatedProject.id, updatedProject);
+        alert('Đã cập nhật dự án thành công!');
+      }
       await fetchProperties();
-      setViewMode('detail');
-      alert('Đã cập nhật dự án thành công!');
+      setViewMode('list');
     } catch (err: any) {
       alert('Lỗi cập nhật: ' + err.message);
     }
@@ -131,7 +129,7 @@ export default function Projects() {
   const confirmDelete = async () => {
     if (projectToDelete) {
       try {
-        await propertiesAPI.delete(projectToDelete.id);
+        await projectsAPI.delete(projectToDelete.id);
         setProjects(projects.filter(p => p.id !== projectToDelete.id));
         setProjectToDelete(null);
         if (selectedProjectId === projectToDelete.id) {
@@ -145,6 +143,16 @@ export default function Projects() {
   };
 
   const selectedProject = projects.find(p => p.id === selectedProjectId);
+
+  if (viewMode === 'add') {
+    return (
+      <ProjectEdit 
+        project={{}}
+        onBack={() => setViewMode('list')}
+        onSave={handleSaveProject}
+      />
+    );
+  }
 
   if (selectedProject && viewMode === 'edit') {
     return (
@@ -238,8 +246,18 @@ export default function Projects() {
       <div className="ap-main-card">
         {/* Header & Toolbar */}
         <div className="ap-main-header">
-          <h2>Danh sách dự án</h2>
-          <div className="ap-toolbar">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+            <h2>Danh sách dự án</h2>
+            <button style={{ 
+              background: '#d89f2a', color: '#fff', border: 'none', 
+              padding: '0.5rem 1rem', borderRadius: '4px', 
+              display: 'flex', alignItems: 'center', gap: '0.5rem', 
+              cursor: 'pointer', fontWeight: 500, fontSize: '0.9rem'
+            }} onClick={() => setViewMode('add')}>
+              <Building2 size={16} /> Thêm dự án mới
+            </button>
+          </div>
+          <div className="ap-toolbar" style={{ marginTop: '1rem' }}>
             <div className="ap-search-box">
               <Search size={18} />
               <input type="text" placeholder="Tìm kiếm dự án..." value={searchTerm} onChange={e => { setSearchTerm(e.target.value); setCurrentPage(1); }} />
