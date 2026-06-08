@@ -12,6 +12,8 @@
     "db:seed": "node prisma/seed.js",
     "db:setup": "prisma db push && node prisma/seed.js",
     "build": "tsc -b && vite build",
+    "postinstall": "prisma generate",
+    "start:prod": "node server.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },
