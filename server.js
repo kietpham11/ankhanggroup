@@ -52,10 +52,13 @@ app.use(cors({
   credentials: true,
 }));
 
+// Trust proxy để lấy đúng IP người dùng khi chạy trên Render / Vercel
+app.set('trust proxy', 1);
+
 // Rate limiting (chống spam / DDoS nhẹ)
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 phút
-  max: 200, // Tối đa 200 request mỗi IP mỗi 15 phút
+  max: 500, // Tối đa 500 request mỗi IP mỗi 15 phút
   message: { error: 'Bạn đã gửi quá nhiều yêu cầu, vui lòng thử lại sau 15 phút.' },
   standardHeaders: true,
   legacyHeaders: false,
