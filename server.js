@@ -88,7 +88,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // ====================== 404 HANDLER FOR API ======================
-app.use('/api/*', (req, res) => {
+app.use('/api', (req, res) => {
   res.status(404).json({ error: 'API route không tồn tại.' });
 });
 
@@ -97,7 +97,7 @@ app.use('/api/*', (req, res) => {
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // Bắt tất cả các route còn lại (không phải /api hay /uploads) và trả về index.html cho React Router xử lý
-app.get('*', (req, res) => {
+app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
