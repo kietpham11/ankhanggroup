@@ -14,6 +14,8 @@ interface ProjectDetailProps {
 
 export default function ProjectDetail({ project, onBack, onEdit, onDelete }: ProjectDetailProps) {
   const [activeTab, setActiveTab] = useState('info');
+  const gallery = project.gallery || project.images || [];
+  const projectLocation = [project.ward, project.province].filter(Boolean).join(', ') || project.location || 'Đang cập nhật';
 
 
   return (
@@ -42,7 +44,7 @@ export default function ProjectDetail({ project, onBack, onEdit, onDelete }: Pro
             </div>
             <div className="apd-stat-item">
               <div className="apd-stat-item-label"><MapPin size={16} /> Vị trí dự án</div>
-              <div className="apd-stat-item-value">{project.location}</div>
+              <div className="apd-stat-item-value">{projectLocation}</div>
             </div>
             <div className="apd-stat-item">
               <div className="apd-stat-item-label"><Calendar size={16} /> Ngày tạo</div>
@@ -95,7 +97,7 @@ export default function ProjectDetail({ project, onBack, onEdit, onDelete }: Pro
                 <div className="apd-info-value">{project.type}</div>
                 
                 <div className="apd-info-label">Vị trí dự án</div>
-                <div className="apd-info-value">{project.location}</div>
+                <div className="apd-info-value">{projectLocation}</div>
                 
                 <div className="apd-info-label">Chủ đầu tư</div>
                 <div className="apd-info-value">{project.developer}</div>
@@ -108,6 +110,9 @@ export default function ProjectDetail({ project, onBack, onEdit, onDelete }: Pro
                 
                 <div className="apd-info-label">Tổng số sản phẩm</div>
                 <div className="apd-info-value">{project.totalUnits}</div>
+
+                <div className="apd-info-label">Số phòng</div>
+                <div className="apd-info-value">{project.roomCount || 'Đang cập nhật'}</div>
                 
                 <div className="apd-info-label">Mô tả dự án</div>
                 <div className="apd-info-value desc">{project.description}</div>
@@ -115,7 +120,7 @@ export default function ProjectDetail({ project, onBack, onEdit, onDelete }: Pro
 
               <h3 className="apd-gallery-title">Hình ảnh dự án</h3>
               <div className="apd-gallery-grid">
-                {project.gallery.map((img: string, idx: number) => (
+                {gallery.map((img: string, idx: number) => (
                   <img key={idx} src={img} alt="Gallery" className="apd-gallery-img" />
                 ))}
                 <div className="apd-gallery-add" onClick={() => alert('Thêm hình ảnh')}>

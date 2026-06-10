@@ -5,13 +5,10 @@ dotenv.config();
 
 const router = express.Router();
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@ankhang.com';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'Ankhang@2026!';
-
 const adminUser = {
   id: 1,
   name: 'Admin',
-  email: ADMIN_EMAIL,
+  email: process.env.ADMIN_EMAIL,
   role: 'ADMIN'
 };
 
@@ -19,10 +16,17 @@ const adminUser = {
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
 
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      const token = generateToken(adminUser);
-      return res.json({ token, user: adminUser });
+    if (!adminEmail || !adminPassword) {
+      return res.status(500).json({ error: 'Admin account is not configured.' });
+    }
+
+    if (email === adminEmail && password === adminPassword) {
+      const user = { ...adminUser, email: adminEmail };
+      const token = generateToken(user);
+      return res.json({ token, user });
     } else {
       return res.status(401).json({ error: 'Email hoặc mật khẩu không đúng.' });
     }
@@ -40,10 +44,10 @@ router.get('/me', async (req, res) => {
     if (!token) return res.status(401).json({ error: 'Chưa đăng nhập.' });
 
     const jwt = await import('jsonwebtoken');
-    const decoded = jwt.default.verify(token, process.env.JWT_SECRET || 'golden_land_secret_key_2026');
+    const decoded = jwt.default.verify(token, process.env.JWT_SECRET);
     
     if (decoded.id === adminUser.id) {
-      res.json(adminUser);
+      res.json({ ...adminUser, email: process.env.ADMIN_EMAIL });
     } else {
       res.status(401).json({ error: 'Token không hợp lệ.' });
     }

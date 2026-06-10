@@ -5,8 +5,8 @@ import { Mail, Lock, Eye, EyeOff, ShieldCheck, Check } from 'lucide-react';
 import './AdminLogin.css';
 
 export default function AdminLogin() {
-  const [email, setEmail] = useState('admin@ankhang.com');
-  const [password, setPassword] = useState('Ankhang@2026!');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState('');

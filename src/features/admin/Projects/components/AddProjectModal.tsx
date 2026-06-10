@@ -59,9 +59,15 @@ export default function AddProjectModal({ onClose, onSave }: AddProjectModalProp
                 <label>Loại dự án <span>*</span></label>
                 <div className="apm-input-wrapper">
                   <select defaultValue="">
-                    <option value="" disabled>Chọn loại dự án</option>
-                    <option value="townhouse">Nhà phố</option>
-                    <option value="land">Đất nền</option>
+                    <option value="" disabled>Chọn loại hình</option>
+                    <option value="Đất nền">Đất nền</option>
+                    <option value="Căn hộ">Căn hộ</option>
+                    <option value="Nhà lầu trệt">Nhà lầu trệt</option>
+                    <option value="Nhà cấp 4">Nhà cấp 4</option>
+                    <option value="Nhà cấp 4 gác lửng">Nhà cấp 4 gác lửng</option>
+                    <option value="Biệt thự mini">Biệt thự mini</option>
+                    <option value="Biệt thự sân vườn">Biệt thự sân vườn</option>
+                    <option value="Cấp 4 sân vườn">Cấp 4 sân vườn</option>
                   </select>
                 </div>
               </div>
@@ -99,6 +105,13 @@ export default function AddProjectModal({ onClose, onSave }: AddProjectModalProp
                 <label>Tổng số sản phẩm</label>
                 <div className="apm-input-wrapper">
                   <input type="text" placeholder="Nhập tổng số sản phẩm" />
+                </div>
+              </div>
+              
+              <div className="apm-form-group">
+                <label>Giá bán (VNĐ)</label>
+                <div className="apm-input-wrapper">
+                  <input type="text" placeholder="Ví dụ: 2950000000" />
                 </div>
               </div>
               

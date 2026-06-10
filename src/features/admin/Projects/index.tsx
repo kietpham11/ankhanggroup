@@ -19,6 +19,37 @@ const parseDateToTime = (dateStr: string) => {
   return 0;
 };
 
+const normalizeProjectStatus = (status?: string) => {
+  if (status === 'Đang mở bán') return 'selling';
+  if (status === 'Sắp mở bán' || status === 'Sắp triển khai') return 'upcoming';
+  if (status === 'Đã bàn giao' || status === 'Đã hoàn thành') return 'completed';
+  return status || '';
+};
+
+const normalizeProjectType = (category?: string) => {
+  if (category === 'Đất nền') return 'land';
+  if (category === 'Căn hộ') return 'apartment';
+  if (category === 'Nhà lầu trệt') return 'nha-lau-tret';
+  if (category === 'Nhà cấp 4') return 'nha-cap-4';
+  if (category === 'Nhà cấp 4 gác lửng') return 'nha-cap-4-gac-lung';
+  if (category === 'Biệt thự mini') return 'biet-thu-mini';
+  if (category === 'Biệt thự sân vườn') return 'biet-thu-san-vuon';
+  if (category === 'Cấp 4 sân vườn') return 'cap-4-san-vuon';
+  return category || '';
+};
+
+const formatProjectLocation = (project: any) => {
+  const parts = [project.ward, project.province].filter(Boolean);
+  return parts.length ? parts.join(', ') : (project.location || 'Đang cập nhật');
+};
+
+const getStatusClass = (statusValue: string) => {
+  if (statusValue === 'selling') return 'selling';
+  if (statusValue === 'upcoming') return 'upcoming';
+  if (statusValue === 'completed') return 'completed';
+  return '';
+};
+
 export default function Projects() {
   const [projects, setProjects] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -40,19 +71,18 @@ export default function Projects() {
     try {
       const data = await projectsAPI.getAll();
       const mapped = data.map((p: any) => ({
-        id: p.id,
-        name: p.name,
+        ...p,
         code: p.slug,
-        slug: p.slug,
-        location: p.location,
-        status: p.status,
-        statusValue: p.status,
+        type: p.category || 'Dự án',
+        typeValue: normalizeProjectType(p.category),
+        statusValue: normalizeProjectStatus(p.status),
+        statusClass: getStatusClass(normalizeProjectStatus(p.status)),
         createdAt: new Date(p.createdAt).toLocaleDateString('en-GB'),
         image: p.images?.[0]?.url || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=150&q=80',
         images: p.images?.map((i: any) => i.url) || [],
-        description: p.description,
-        content: p.content,
-        isFeatured: p.isFeatured,
+        gallery: p.images?.map((i: any) => i.url) || [],
+        creator: p.creator || 'Admin',
+        updater: p.updater || 'Admin',
       }));
       setProjects(mapped);
     } catch (err) {
@@ -281,8 +311,14 @@ export default function Projects() {
               <div className="ap-select-wrapper">
                 <select value={typeFilter} onChange={e => { setTypeFilter(e.target.value); setCurrentPage(1); }}>
                   <option value="all">Tất cả loại dự án</option>
-                  <option value="townhouse">Nhà phố</option>
                   <option value="land">Đất nền</option>
+                  <option value="apartment">Căn hộ</option>
+                  <option value="nha-lau-tret">Nhà lầu trệt</option>
+                  <option value="nha-cap-4">Nhà cấp 4</option>
+                  <option value="nha-cap-4-gac-lung">Nhà cấp 4 gác lửng</option>
+                  <option value="biet-thu-mini">Biệt thự mini</option>
+                  <option value="biet-thu-san-vuon">Biệt thự sân vườn</option>
+                  <option value="cap-4-san-vuon">Cấp 4 sân vườn</option>
                 </select>
                 <ChevronDown size={16} />
               </div>
@@ -330,7 +366,7 @@ export default function Projects() {
                   <td>{proj.type}</td>
                   <td>
                     <div className="ap-location">
-                      <MapPin size={14} /> {proj.location}
+                      <MapPin size={14} /> {formatProjectLocation(proj)}
                     </div>
                   </td>
                   <td>

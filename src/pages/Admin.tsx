@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Building2, LayoutDashboard, Home, FileText, Image,
   Settings, User, LogOut, Bell, Calendar,
@@ -14,6 +14,7 @@ import { dashboardAPI, contactsAPI, propertiesAPI } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Projects from '../features/admin/Projects';
+
 import Posts from '../features/admin/Posts';
 import AddPost from '../features/admin/Posts/AddPost';
 import Contacts from '../features/admin/Contacts';
@@ -60,11 +61,30 @@ function Admin() {
   const [contacts, setContacts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  if (authLoading || !user || !isAdmin) {
-    return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0B224F', color: 'white' }}>Đang xác thực...</div>;
-  }
+
+  const loadDashboard = useCallback(async (days: number) => {
+    try {
+      setIsLoading(true);
+      const data = await dashboardAPI.getStats(days);
+      
+      setStats(data.stats);
+
+      setDashboardData({
+        contactsReport: data.contactsReport || [],
+        projectStatusDistribution: data.projectStatusDistribution || [],
+        topProperties: data.topProperties || [],
+        revenueData: data.revenueData || [],
+        trafficData: data.trafficData || []
+      });
+    } catch (err) {
+      console.error('Dashboard error:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
+    if (authLoading || !user || !isAdmin) return;
     loadDashboard(timeframe);
     
     // Auto refresh stats every 10 seconds to show new notifications
@@ -88,28 +108,7 @@ function Admin() {
     }, 10000);
     
     return () => clearInterval(interval);
-  }, [timeframe]);
-
-  const loadDashboard = async (days: number) => {
-    try {
-      setIsLoading(true);
-      const data = await dashboardAPI.getStats(days);
-      
-      setStats(data.stats);
-
-      setDashboardData({
-        contactsReport: data.contactsReport || [],
-        projectStatusDistribution: data.projectStatusDistribution || [],
-        topProperties: data.topProperties || [],
-        revenueData: data.revenueData || [],
-        trafficData: data.trafficData || []
-      });
-    } catch (err) {
-      console.error('Dashboard error:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [authLoading, user, isAdmin, timeframe, loadDashboard]);
 
   const loadContacts = async () => {
     try {
@@ -138,6 +137,7 @@ function Admin() {
   const menuItems: { page: Page; icon: any; label: string }[] = [
     { page: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { page: 'projects', icon: Building2, label: 'Dự án' },
+
     { page: 'posts', icon: FileText, label: 'Bài viết' },
     { page: 'recruitment', icon: Briefcase, label: 'Tuyển dụng' },
     { page: 'candidates', icon: Users, label: 'Ứng viên' },
@@ -145,6 +145,10 @@ function Admin() {
     { page: 'settings', icon: Settings, label: 'Cài đặt' },
     { page: 'leadership', icon: Users, label: 'Đội ngũ lãnh đạo' },
   ];
+
+  if (authLoading || !user || !isAdmin) {
+    return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0B224F', color: 'white' }}>Dang xac thuc...</div>;
+  }
 
   return (
     <div className="admin-container">
@@ -407,6 +411,8 @@ function Admin() {
         {activePage === 'projects' && (
           <Projects />
         )}
+
+
 
         {/* ====== POSTS PAGE ====== */}
         {activePage === 'posts' && postView === 'list' && (

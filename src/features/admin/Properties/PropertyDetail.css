@@ -1,0 +1,368 @@
+/* Admin Property Detail CSS */
+
+.apd-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  font-family: var(--font-body, 'Inter', sans-serif);
+}
+
+/* Sub Header */
+.apd-header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.apd-btn-back {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 1px solid #e2e8f0;
+  color: #4a5568;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.apd-btn-back:hover {
+  background: #f7fafc;
+  color: #1a202c;
+}
+
+/* Top Card */
+.apd-top-card {
+  background: #ffffff;
+  border: 1px solid #eef0f4;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  gap: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.apd-thumbnail {
+  width: 200px;
+  height: 140px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.apd-top-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+}
+
+.apd-title-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.apd-title-row h2 {
+  font-size: 1.5rem;
+  color: #173A6A;
+  margin: 0;
+  font-weight: 700;
+}
+
+.apd-code {
+  color: #718096;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.apd-stats-row {
+  display: flex;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+
+.apd-stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.apd-stat-item-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.apd-stat-item-label svg {
+  color: #a0aec0;
+}
+
+.apd-stat-item-value {
+  color: #718096;
+  font-size: 0.85rem;
+  padding-left: 1.4rem;
+}
+
+/* Tabs Navigation */
+.apd-tabs {
+  display: flex;
+  gap: 2rem;
+  border-bottom: 1px solid #e2e8f0;
+  margin-top: 1rem;
+}
+
+.apd-tab-item {
+  padding: 0.75rem 0;
+  font-size: 0.95rem;
+  color: #718096;
+  font-weight: 500;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.apd-tab-item:hover {
+  color: #4a5568;
+}
+
+.apd-tab-item.active {
+  color: #d89f2a;
+  border-bottom-color: #d89f2a;
+  font-weight: 600;
+}
+
+/* Content Grid */
+.apd-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1.5rem;
+}
+
+.apd-content-left {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.apd-main-info-card {
+  flex: 2;
+  background: #ffffff;
+  border: 1px solid #eef0f4;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.apd-meta-card {
+  flex: 1;
+  background: #ffffff;
+  border: 1px solid #eef0f4;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+  height: fit-content;
+}
+
+.apd-sidebar-card {
+  background: #ffffff;
+  border: 1px solid #eef0f4;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: fit-content;
+}
+
+.apd-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #173A6A;
+  margin: 0 0 1.5rem 0;
+}
+
+/* Info Grid */
+.apd-info-grid {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  row-gap: 1rem;
+  column-gap: 1rem;
+  font-size: 0.9rem;
+}
+
+.apd-info-label {
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.apd-info-value {
+  color: #1a202c;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.apd-info-value.desc {
+  font-weight: 400;
+  color: #4a5568;
+}
+
+.apd-meta-card .apd-info-grid {
+  grid-template-columns: 100px 1fr;
+}
+
+/* Gallery */
+.apd-gallery-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #173A6A;
+  margin: 2rem 0 1rem 0;
+}
+
+.apd-gallery-grid {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.apd-gallery-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #e2e8f0;
+}
+
+.apd-gallery-add {
+  width: 90px;
+  height: 90px;
+  border-radius: 8px;
+  border: 1px dashed #cbd5e0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #718096;
+  font-size: 0.75rem;
+  cursor: pointer;
+  background: #f7fafc;
+  transition: all 0.2s;
+  gap: 0.25rem;
+}
+
+.apd-gallery-add:hover {
+  background: #edf2f7;
+  border-color: #a0aec0;
+  color: #4a5568;
+}
+
+/* Sidebar Actions */
+.apd-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #ffffff;
+  border: 1px solid #eef0f4;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.apd-action-btn:hover {
+  border-color: #d89f2a;
+  box-shadow: 0 4px 12px rgba(216, 159, 42, 0.08);
+}
+
+.apd-action-btn.edit {
+  background: #fffcf5;
+  border-color: #f6e0b5;
+}
+
+.apd-action-btn.delete {
+  background: #fff1f2;
+  border-color: #fecdd3;
+  margin-top: 1rem;
+  border-radius: 12px;
+}
+
+.apd-action-btn.delete:hover {
+  background: #ffe4e6;
+  border-color: #fca5a5;
+}
+
+.apd-action-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #f7fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #718096;
+  flex-shrink: 0;
+}
+
+.apd-action-btn.edit .apd-action-icon {
+  background: rgba(216, 159, 42, 0.1);
+  color: #d89f2a;
+}
+
+.apd-action-btn.delete .apd-action-icon {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.apd-action-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.apd-action-text strong {
+  font-size: 0.95rem;
+  color: #1a202c;
+  margin-bottom: 0.2rem;
+}
+
+.apd-action-text span {
+  font-size: 0.8rem;
+  color: #718096;
+}
+
+.apd-action-btn.delete .apd-action-text strong,
+.apd-action-btn.delete .apd-action-text span {
+  color: #c53030;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .apd-content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .apd-content-left {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .apd-top-card {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .apd-thumbnail {
+    width: 100%;
+    height: 200px;
+  }
+}

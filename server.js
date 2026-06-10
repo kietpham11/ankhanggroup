@@ -87,9 +87,18 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: '🚀 Golden Land API đang chạy', timestamp: new Date() });
 });
 
-// ====================== 404 HANDLER ======================
-app.use('/api/{*path}', (req, res) => {
+// ====================== 404 HANDLER FOR API ======================
+app.use('/api/*', (req, res) => {
   res.status(404).json({ error: 'API route không tồn tại.' });
+});
+
+// ====================== FRONTEND SERVING (PRODUCTION) ======================
+// Phục vụ các file tĩnh của React (thư mục dist) khi chạy trên Hosting/Production
+app.use(express.static(path.join(__dirname, 'dist')));
+
+// Bắt tất cả các route còn lại (không phải /api hay /uploads) và trả về index.html cho React Router xử lý
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 // ====================== START SERVER ======================

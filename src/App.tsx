@@ -49,7 +49,7 @@ function App() {
     "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2000&auto=format&fit=crop"
   ];
   const [currentView, setCurrentView] = useState<'home' | 'about' | 'contact' | 'projects' | 'news' | 'recruitment' | 'project_detail' | 'news_detail' | 'job_detail' | 'team_detail'>('home');
-  const [currentProjectId, setCurrentProjectId] = useState<number | null>(null);
+  const [currentProjectId, setCurrentProjectId] = useState<string | null>(null);
   const [currentNewsId, setCurrentNewsId] = useState<number | string | null>(null);
   const [currentJobId, setCurrentJobId] = useState<number | null>(null);
   const [currentTeamMemberId, setCurrentTeamMemberId] = useState<number | null>(null);
@@ -189,8 +189,8 @@ function App() {
       {currentView === 'home' && (
         <HomeView 
           banners={banners.home}
-          onViewDetail={(id) => {
-            setCurrentProjectId(id);
+          onViewDetail={(slug) => {
+            setCurrentProjectId(slug);
             setCurrentView('project_detail');
           }} 
           onViewAllProjects={() => setCurrentView('projects')}
@@ -206,7 +206,7 @@ function App() {
 
       {currentView === 'project_detail' && (
         <ProjectDetail 
-          projectId={currentProjectId || undefined}
+          projectSlug={currentProjectId ? String(currentProjectId) : undefined}
           onBack={() => setCurrentView('projects')}
         />
       )}

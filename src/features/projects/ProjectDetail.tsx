@@ -1,36 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-  ArrowLeft, MapPin, Maximize, BedDouble, ShieldCheck, 
-  Map, Download, PhoneCall, ChevronLeft, ChevronRight, CheckCircle2
+  ArrowLeft, MapPin, Maximize, Building, ShieldCheck, 
+  ChevronLeft, ChevronRight, CheckCircle2, Package
 } from 'lucide-react';
 import LoanCalculator from '../../components/shared/LoanCalculator';
-import { contactsAPI, propertiesAPI } from '../../lib/api';
+import { contactsAPI, projectsAPI } from '../../lib/api';
 import './ProjectDetail.css';
 
 interface ProjectDetailProps {
   onBack: () => void;
-  projectId?: number;
+  projectSlug?: string;
 }
 
-export default function ProjectDetail({ onBack, projectId }: ProjectDetailProps) {
+export default function ProjectDetail({ onBack, projectSlug }: ProjectDetailProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [contactName, setContactName] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const [property, setProperty] = useState<any>(null);
+  const [project, setProject] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  React.useEffect(() => {
-    if (!projectId) {
+  useEffect(() => {
+    if (!projectSlug) {
       setIsLoading(false);
       return;
     }
-    propertiesAPI.getById(projectId)
-      .then(setProperty)
+    projectsAPI.getBySlug(projectSlug)
+      .then(setProject)
       .catch(console.error)
       .finally(() => setIsLoading(false));
-  }, [projectId]);
+  }, [projectSlug]);
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,8 +41,7 @@ export default function ProjectDetail({ onBack, projectId }: ProjectDetailProps)
         name: contactName,
         phone: contactPhone,
         email: '',
-        message: 'Đăng ký nhận thông tin dự án từ trang Chi tiết dự án.',
-        propertyId: projectId
+        message: `Đăng ký nhận thông tin dự án: ${project?.name}`,
       });
       alert('Cảm ơn bạn đã quan tâm. Chúng tôi sẽ liên hệ lại sớm nhất!');
       setContactName('');
@@ -57,8 +56,8 @@ export default function ProjectDetail({ onBack, projectId }: ProjectDetailProps)
   const defaultImages = [
     "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2000&auto=format&fit=crop"
   ];
-  const images = property?.images?.length > 0 
-    ? property.images.map((img: any) => img.url) 
+  const images = project?.images?.length > 0 
+    ? project.images.map((img: any) => img.url) 
     : defaultImages;
 
   const nextImage = () => setCurrentImageIndex(prev => (prev + 1) % images.length);
@@ -72,11 +71,13 @@ export default function ProjectDetail({ onBack, projectId }: ProjectDetailProps)
     );
   }
 
-  if (!property) {
-    // Automatically go back if project not found
+  if (!project) {
     setTimeout(onBack, 0);
     return null;
   }
+
+  const amenitiesList = project.amenities ? JSON.parse(project.amenities) : [];
+  const projectLocation = [project.ward, project.province].filter(Boolean).join(', ') || project.location || 'Đang cập nhật';
 
   return (
     <div className="project-detail-page">
@@ -92,7 +93,7 @@ export default function ProjectDetail({ onBack, projectId }: ProjectDetailProps)
             {/* Gallery */}
             <div className="pd-gallery">
               <div className="pd-main-image-wrapper">
-                <span className="pd-badge">{property.type === 'LAND' ? 'Đất nền' : (property.type === 'HOUSE' ? 'Nhà phố' : property.type)}</span>
+                <span className="pd-badge">{project.category || 'Dự án'}</span>
                 <img src={images[currentImageIndex]} alt="Project main" className="pd-main-image" />
                 <button className="pd-nav-btn prev" onClick={prevImage}><ChevronLeft size={24} /></button>
                 <button className="pd-nav-btn next" onClick={nextImage}><ChevronRight size={24} /></button>
@@ -113,73 +114,72 @@ export default function ProjectDetail({ onBack, projectId }: ProjectDetailProps)
               </div>
             </div>
 
-            {/* Overview & Map */}
-            <div className="pd-overview-row">
-              <div className="pd-overview-content">
+            {/* Overview Content */}
+            <div className="pd-overview-row" style={{ display: 'block', marginTop: '2rem' }}>
+              <div className="pd-overview-content" style={{ width: '100%', paddingRight: 0 }}>
                 <h3 className="pd-section-title">Tổng quan dự án</h3>
-                <div className="pd-desc" style={{ whiteSpace: 'pre-line' }}>
-                  {property.description || 'Đang cập nhật thông tin tổng quan...'}
-                </div>
-                <ul className="pd-features-list">
-                  <li><CheckCircle2 size={16} className="text-gold" /> Công viên 36ha - lớn nhất Đông Nam Á</li>
-                  <li><CheckCircle2 size={16} className="text-gold" /> Hệ thống trường học Vinschool, bệnh viện Vinmec</li>
-                  <li><CheckCircle2 size={16} className="text-gold" /> Trung tâm thương mại Vincom Mega Mall</li>
-                  <li><CheckCircle2 size={16} className="text-gold" /> Hệ thống an ninh 24/7, quản lý thông minh</li>
-                </ul>
-              </div>
-              
-              <div className="pd-map-box">
-                {property.mapImage ? (
-                  <img src={property.mapImage} alt="Map" style={{ width: '100%', height: '100%', objectFit: 'cover', minHeight: '300px', borderRadius: '8px' }} />
+                {project.content ? (
+                  <div className="pd-desc custom-html-content" dangerouslySetInnerHTML={{ __html: project.content }}></div>
                 ) : (
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3917.0785999027185!2d106.8573159748076!3d10.957435289202586!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3174dd00658c1907%3A0xc09d80dd5e6f5bb3!2zQuG6pXQgxJDhu5luZyBT4bqjbiBBbiBLaGFuZyBHcm91cA!5e0!3m2!1svi!2s!4v1780473565713!5m2!1svi!2s"
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0, minHeight: '300px' }}
-                    allowFullScreen={true}
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title="Google Map An Khang Group"
-                  ></iframe>
+                  <div className="pd-desc" style={{ whiteSpace: 'pre-line' }}>
+                    {project.description || 'Đang cập nhật thông tin tổng quan...'}
+                  </div>
+                )}
+
+                {/* Amenities */}
+                {amenitiesList.length > 0 && (
+                  <div style={{ marginTop: '2rem' }}>
+                    <h3 className="pd-section-title">Tiện ích nổi bật</h3>
+                    <ul className="pd-features-list" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+                      {amenitiesList.map((am: string, i: number) => (
+                        <li key={i}><CheckCircle2 size={16} className="text-gold" /> {am}</li>
+                      ))}
+                    </ul>
+                  </div>
                 )}
               </div>
             </div>
-            
 
 
           </div>
 
           {/* RIGHT COLUMN */}
           <div className="pd-right-col">
-            <h1 className="pd-title">{property.title}</h1>
+            <h1 className="pd-title">{project.name}</h1>
             <p className="pd-address">
-              <MapPin size={16} /> {property.address}
+              <MapPin size={16} /> {projectLocation}
             </p>
 
             <div className="pd-stats-grid">
               <div className="pd-stat-item highlight">
-                <div className="stat-val"><span className="text-gold">{(Number(property.price) || 0).toLocaleString('vi-VN')}</span> VNĐ/căn</div>
-                <div className="stat-label">Giá bán</div>
+                <div className="stat-val"><span className="text-gold">{project.status || 'Đang mở bán'}</span></div>
+                <div className="stat-label">Trạng thái</div>
               </div>
               <div className="pd-stat-item">
                 <Maximize size={20} className="stat-icon" />
                 <div>
-                  <div className="stat-val">{property.area} m²</div>
+                  <div className="stat-val">{project.area || '-'}</div>
                   <div className="stat-label">Diện tích</div>
                 </div>
               </div>
               <div className="pd-stat-item">
-                <BedDouble size={20} className="stat-icon" />
+                <Package size={20} className="stat-icon" />
                 <div>
-                  <div className="stat-val">{property.bedrooms || '-'}</div>
-                  <div className="stat-label">Phòng ngủ</div>
+                  <div className="stat-val">{project.totalUnits || '-'}</div>
+                  <div className="stat-label">Số lượng SP</div>
+                </div>
+              </div>
+              <div className="pd-stat-item">
+                <Building size={20} className="stat-icon" />
+                <div>
+                  <div className="stat-val">{project.roomCount || '-'}</div>
+                  <div className="stat-label">Số phòng</div>
                 </div>
               </div>
             </div>
 
             <div className="pd-highlights">
-              <h4 className="pd-highlights-title">Điểm nổi bật</h4>
+              <h4 className="pd-highlights-title">Tổng quan</h4>
               <div className="pd-highlights-grid">
                 <span><MapPin size={14} className="text-gold" /> Vị trí đắc địa</span>
                 <span><ShieldCheck size={14} className="text-gold" /> Tiện ích đẳng cấp</span>
@@ -190,30 +190,28 @@ export default function ProjectDetail({ onBack, projectId }: ProjectDetailProps)
 
             <div className="pd-info-table">
               <div className="pd-info-row">
-                <span className="pd-info-label">Loại hình</span>
-                <span className="pd-info-val">
-                  {property.type === 'APARTMENT' ? 'Căn hộ' : property.type === 'HOUSE' ? 'Nhà phố' : property.type === 'LAND' ? 'Đất nền' : property.type}
-                </span>
+                <span className="pd-info-label">Chủ đầu tư</span>
+                <span className="pd-info-val">{project.developer || 'Đang cập nhật'}</span>
               </div>
               <div className="pd-info-row">
-                <span className="pd-info-label">Dự án khu vực</span>
-                <span className="pd-info-val">{property.project?.name || 'Đang cập nhật'}</span>
+                <span className="pd-info-label">Đơn vị phát triển</span>
+                <span className="pd-info-val">{project.partner || 'Đang cập nhật'}</span>
+              </div>
+              <div className="pd-info-row">
+                <span className="pd-info-label">Khu vực</span>
+                <span className="pd-info-val">{projectLocation}</span>
+              </div>
+              <div className="pd-info-row">
+                <span className="pd-info-label">Hình thức sở hữu</span>
+                <span className="pd-info-val">{project.ownership || 'Đang cập nhật'}</span>
               </div>
               <div className="pd-info-row">
                 <span className="pd-info-label">Pháp lý</span>
-                <span className="pd-info-val">{property.legal || 'Đang cập nhật'}</span>
+                <span className="pd-info-val">{project.legal || 'Đang cập nhật'}</span>
               </div>
               <div className="pd-info-row">
-                <span className="pd-info-label">Hướng</span>
-                <span className="pd-info-val">{property.direction || 'Đang cập nhật'}</span>
-              </div>
-              <div className="pd-info-row">
-                <span className="pd-info-label">Số phòng tắm</span>
-                <span className="pd-info-val">{property.bathrooms ? `${property.bathrooms} phòng` : 'Đang cập nhật'}</span>
-              </div>
-              <div className="pd-info-row">
-                <span className="pd-info-label">Trạng thái</span>
-                <span className="pd-info-val">{property.status === 'AVAILABLE' ? 'Đang mở bán' : property.status}</span>
+                <span className="pd-info-label">Thời gian bàn giao</span>
+                <span className="pd-info-val">{project.handoverDate || 'Đang cập nhật'}</span>
               </div>
             </div>
 
@@ -226,46 +224,68 @@ export default function ProjectDetail({ onBack, projectId }: ProjectDetailProps)
                 Liên hệ tư vấn
               </button>
             </div>
+
+            {/* Properties List within Project could go here later */}
           </div>
         </div>
 
-        {/* Slim Horizontal Contact Form */}
-        <div className="pd-contact-slim">
-          <h4 className="pd-contact-slim-title">
-            Đăng ký nhận thông tin
-          </h4>
-          <form className="pd-contact-slim-form" onSubmit={handleContactSubmit}>
-            <input 
-              type="text" 
-              placeholder="Họ và tên của bạn" 
-              value={contactName}
-              onChange={(e) => setContactName(e.target.value)}
-              required 
-            />
-            <input 
-              type="tel" 
-              placeholder="Số điện thoại liên hệ" 
-              value={contactPhone}
-              onChange={(e) => {
-                const val = e.target.value.replace(/\D/g, '');
-                if (val.length <= 10) setContactPhone(val);
-              }}
-              required 
-            />
-            <button 
-              type="submit" 
-              className="btn-solid-gold" 
-              disabled={isSubmitting}
-              style={{ cursor: isSubmitting ? 'wait' : 'pointer', opacity: isSubmitting ? 0.7 : 1 }}
-            >
-              {isSubmitting ? 'Đang gửi...' : 'Gửi yêu cầu'}
-            </button>
-          </form>
-        </div>
+        {/* Location image + contact form (Full Width) */}
+        {(project.mapImage || project.mapAddress) && (
+          <div className="pd-location-contact-section">
+            <div className="pd-location-image-panel">
+              <h3 className="pd-section-title">Vị trí dự án</h3>
+              {project.mapAddress && (
+                <p className="pd-location-caption">
+                  <MapPin size={16} className="text-gold" /> {project.mapAddress}
+                </p>
+              )}
+              <div className="pd-map-image-box">
+                {project.mapImage ? (
+                  <img src={project.mapImage} alt={`Vị trí dự án ${project.name}`} />
+                ) : (
+                  <div className="pd-map-image-empty">Chưa có ảnh vị trí</div>
+                )}
+              </div>
+            </div>
+
+            <div className="pd-contact-card">
+              <h4 className="pd-contact-title">Đăng ký nhận thông tin</h4>
+              <p className="pd-contact-desc">Nhận tư vấn chi tiết về dự án và bảng giá mới nhất.</p>
+              <form className="pd-contact-form" onSubmit={handleContactSubmit}>
+                <input 
+                  type="text" 
+                  placeholder="Họ và tên của bạn" 
+                  value={contactName}
+                  onChange={(e) => setContactName(e.target.value)}
+                  required 
+                />
+                <input 
+                  type="tel" 
+                  placeholder="Số điện thoại liên hệ" 
+                  value={contactPhone}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '');
+                    if (val.length <= 10) setContactPhone(val);
+                  }}
+                  required 
+                />
+                <button 
+                  type="submit" 
+                  className="btn-solid-gold" 
+                  disabled={isSubmitting}
+                  style={{ cursor: isSubmitting ? 'wait' : 'pointer', opacity: isSubmitting ? 0.7 : 1 }}
+                >
+                  {isSubmitting ? 'Đang gửi...' : 'Gửi yêu cầu'}
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
       </div>
       
       {/* Loan Calculator Section */}
-      <div className="pd-container">
+      <div className="pd-container" style={{ marginTop: '4rem' }}>
         <LoanCalculator />
       </div>
     </div>

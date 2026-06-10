@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   ChevronRight, ChevronLeft, Calendar, Eye, Share2, Bookmark, Mail
 } from 'lucide-react';
-import { postsAPI } from '../../lib/api';
+import { postsAPI, contactsAPI } from '../../lib/api';
 import './NewsDetail.css';
 
 interface NewsDetailProps {
@@ -13,6 +13,11 @@ interface NewsDetailProps {
 export default function NewsDetail({ onBack, newsId }: NewsDetailProps) {
   const [post, setPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  // Newsletter form state
+  const [nlName, setNlName] = useState('');
+  const [nlPhone, setNlPhone] = useState('');
+  const [isSubmittingNl, setIsSubmittingNl] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -31,6 +36,33 @@ export default function NewsDetail({ onBack, newsId }: NewsDetailProps) {
     };
     fetchPost();
   }, [newsId]);
+
+  const handleNewsletterSubmit = async () => {
+    if (!nlName || !nlPhone) {
+      alert('Vui lòng điền đầy đủ họ tên và số điện thoại.');
+      return;
+    }
+    if (nlPhone.length < 10) {
+      alert('Số điện thoại không hợp lệ.');
+      return;
+    }
+    setIsSubmittingNl(true);
+    try {
+      await contactsAPI.send({
+        name: nlName,
+        phone: nlPhone,
+        email: '',
+        message: 'Đăng ký nhận bản tin từ trang tin tức.',
+      });
+      alert('Đăng ký nhận bản tin thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.');
+      setNlName('');
+      setNlPhone('');
+    } catch (error: any) {
+      alert(error.message || 'Lỗi gửi yêu cầu, vui lòng thử lại.');
+    } finally {
+      setIsSubmittingNl(false);
+    }
+  };
 
   const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
   const getImgUrl = (path: string) => {
@@ -91,11 +123,7 @@ export default function NewsDetail({ onBack, newsId }: NewsDetailProps) {
                   <div className="nd-meta-left">
                     <span className="nd-author">Tác giả: <strong>{post.authorName || 'Admin'}</strong></span>
                     <span className="nd-date"><Calendar size={14} /> {new Date(post.createdAt).toLocaleDateString('vi-VN')}</span>
-                    <span className="nd-views"><Eye size={14} /> {post.views || 0} lượt xem</span>
-                  </div>
-                  <div className="nd-actions">
-                    <button className="btn-outline-navy"><Share2 size={16} /> Chia sẻ</button>
-                    <button className="btn-outline-navy"><Bookmark size={16} /> Lưu bài viết</button>
+                    <span className="nd-views"><Eye size={14} /> {post.views || 368} lượt xem</span>
                   </div>
                 </div>
               </div>
@@ -108,8 +136,8 @@ export default function NewsDetail({ onBack, newsId }: NewsDetailProps) {
                 {post.authorName ? post.authorName.charAt(0) : 'A'}
               </div>
               <div className="nd-author-info">
-                <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--navy-primary)' }}>{post.authorName || 'Admin'}</h4>
-                <p style={{ margin: 0, color: 'var(--text-muted)' }}>Ban Biên Tập - Golden Land</p>
+                <h4 style={{ margin: '0 0 0.5rem 0', color: 'var(--navy-primary)' }}>Admin - AK Group</h4>
+                <p style={{ margin: 0, color: 'var(--text-muted)' }}>Ban Biên Tập - AK Group</p>
               </div>
             </div>
           </div>
@@ -135,8 +163,31 @@ export default function NewsDetail({ onBack, newsId }: NewsDetailProps) {
             </div>
           </div>
           <div className="nd-nl-right">
-            <input type="email" placeholder="Nhập email của bạn" style={{ flex: 1, padding: '0.75rem', borderRadius: '4px', border: 'none', outline: 'none' }} />
-            <button className="btn-solid-gold" style={{ padding: '0.75rem 1.5rem', border: 'none', borderRadius: '4px', cursor: 'pointer', whiteSpace: 'nowrap' }}>Đăng ký</button>
+            <input 
+              type="text" 
+              placeholder="Họ và tên" 
+              value={nlName}
+              onChange={e => setNlName(e.target.value)}
+            />
+            <input 
+              type="tel" 
+              placeholder="Số điện thoại" 
+              maxLength={10} 
+              value={nlPhone}
+              onInput={(e) => { 
+                const val = (e.target as HTMLInputElement).value.replace(/\D/g, '').slice(0, 10);
+                (e.target as HTMLInputElement).value = val;
+                setNlPhone(val);
+              }} 
+            />
+            <button 
+              className="btn-solid-gold" 
+              onClick={handleNewsletterSubmit}
+              disabled={isSubmittingNl}
+              style={{ opacity: isSubmittingNl ? 0.7 : 1, cursor: isSubmittingNl ? 'wait' : 'pointer' }}
+            >
+              {isSubmittingNl ? 'Đang gửi...' : 'Đăng ký'}
+            </button>
           </div>
         </div>
 

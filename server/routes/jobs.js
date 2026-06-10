@@ -1,10 +1,11 @@
 import express from 'express';
-import { PrismaClient } from '@prisma/client';
 import multer from 'multer';
 import path from 'path';
+import { adminMiddleware } from '../middleware/auth.js';
+import prisma from '../prisma.js';
+import { createCvUpload, runSingleUpload } from '../utils/upload.js';
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // Multer Config
 const storage = multer.diskStorage({
@@ -16,10 +17,7 @@ const storage = multer.diskStorage({
     cb(null, uniqueSuffix + path.extname(file.originalname));
   }
 });
-const upload = multer({ 
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 } // 5MB
-});
+const upload = createCvUpload(storage);
 
 // ======================= JOBS =======================
 
@@ -51,7 +49,6 @@ router.get('/:id', async (req, res) => {
   try {
     const job = await prisma.job.findUnique({
       where: { id: parseInt(req.params.id) },
-      include: { candidates: true }
     });
     if (!job) return res.status(404).json({ error: 'Không tìm thấy tin tuyển dụng.' });
     res.json(job);
@@ -62,7 +59,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Tạo tin tuyển dụng mới
-router.post('/', async (req, res) => {
+router.post('/', adminMiddleware, async (req, res) => {
   try {
     const { title, slug, department, location, type, salaryRange, description, requirements, benefits, hrName, hrPhone, hrEmail, hrAddress, status, deadline } = req.body;
     
@@ -99,7 +96,7 @@ router.post('/', async (req, res) => {
 });
 
 // Sửa tin tuyển dụng
-router.put('/:id', async (req, res) => {
+router.put('/:id', adminMiddleware, async (req, res) => {
   try {
     const { title, slug, department, location, type, salaryRange, description, requirements, benefits, hrName, hrPhone, hrEmail, hrAddress, status, deadline } = req.body;
     
@@ -123,7 +120,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Xóa tin tuyển dụng
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', adminMiddleware, async (req, res) => {
   try {
     await prisma.job.delete({
       where: { id: parseInt(req.params.id) }
@@ -138,7 +135,7 @@ router.delete('/:id', async (req, res) => {
 // ======================= CANDIDATES =======================
 
 // Lấy danh sách TẤT CẢ ứng viên
-router.get('/candidates/all', async (req, res) => {
+router.get('/candidates/all', adminMiddleware, async (req, res) => {
   try {
     const candidates = await prisma.candidate.findMany({
       orderBy: { createdAt: 'desc' },
@@ -154,7 +151,7 @@ router.get('/candidates/all', async (req, res) => {
 });
 
 // Nộp hồ sơ ứng tuyển (Thêm candidate)
-router.post('/:id/candidates', upload.single('cvFile'), async (req, res) => {
+router.post('/:id/candidates', runSingleUpload(upload, 'cvFile'), async (req, res) => {
   try {
     const { name, email, phone, coverLetter } = req.body;
     
@@ -182,7 +179,7 @@ router.post('/:id/candidates', upload.single('cvFile'), async (req, res) => {
 });
 
 // Cập nhật trạng thái ứng viên
-router.put('/candidates/:id', async (req, res) => {
+router.put('/candidates/:id', adminMiddleware, async (req, res) => {
   try {
     const { status } = req.body;
     const updatedCandidate = await prisma.candidate.update({

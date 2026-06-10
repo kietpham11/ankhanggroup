@@ -1,30 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import {
   Search, MapPin, Building2, Package, Bookmark,
-  ChevronDown, Heart, LayoutGrid, List, ArrowRight,
+  ChevronDown, LayoutGrid, List, ArrowRight,
   Maximize, Building, Home as HomeIcon
 } from 'lucide-react';
 import LoanCalculator from '../../components/shared/LoanCalculator';
-import { propertiesAPI } from '../../lib/api';
+import { projectsAPI } from '../../lib/api';
 import './Projects.css';
-const TYPE_LABELS: Record<string, string> = {
-  LAND: 'Đất nền', HOUSE: 'Nhà phố', APARTMENT: 'Căn hộ'
-};
 
-export default function Projects({ onViewDetail, banner }: { onViewDetail?: (id: number) => void, banner?: string }) {
+export default function Projects({ onViewDetail, banner }: { onViewDetail?: (slug: string) => void, banner?: string }) {
   const [projects, setProjects] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [location, setLocation] = useState('all');
-  const [type, setType] = useState('all');
-  const [priceRange, setPriceRange] = useState('all');
-  const [sortOrder, setSortOrder] = useState('newest');
+  const [category, setCategory] = useState('all');
+  const [status, setStatus] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
   useEffect(() => {
-    propertiesAPI.getAll()
+    projectsAPI.getAll()
       .then(setProjects)
       .catch(console.error)
       .finally(() => setIsLoading(false));
@@ -32,44 +28,35 @@ export default function Projects({ onViewDetail, banner }: { onViewDetail?: (id:
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, location, type, priceRange, sortOrder]);
+  }, [searchQuery, location, category, status]);
+
+  const formatProjectLocation = (project: any) => {
+    const parts = [project.ward, project.province].filter(Boolean);
+    return parts.length ? parts.join(', ') : (project.location || 'Đang cập nhật');
+  };
 
   const filteredProjects = projects.filter(project => {
-    const matchSearch = project.title?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                        project.address?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchLocation = location === 'all' || project.address?.includes(location);
-    const matchType = type === 'all' || TYPE_LABELS[project.type] === type || project.type === type;
-    
-    let matchPrice = true;
-    const priceVal = project.price || 0;
-    if (priceRange === 'under2') matchPrice = priceVal < 2;
-    else if (priceRange === '2to10') matchPrice = priceVal >= 2 && priceVal <= 10;
-    else if (priceRange === 'over10') matchPrice = priceVal > 10;
+    const displayLocation = formatProjectLocation(project);
+    const matchSearch = project.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                        displayLocation.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchLocation = location === 'all' || displayLocation.includes(location);
+    const matchCategory = category === 'all' || project.category === category;
+    const matchStatus = status === 'all' || project.status === status;
 
-    return matchSearch && matchLocation && matchType && matchPrice;
-  }).sort((a, b) => {
-    if (sortOrder === 'priceAsc') return (a.price || 0) - (b.price || 0);
-    if (sortOrder === 'priceDesc') return (b.price || 0) - (a.price || 0);
-    return 0;
+    return matchSearch && matchLocation && matchCategory && matchStatus;
   });
 
   const totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
   const paginatedProjects = filteredProjects.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  // Dynamic stats calculation
   const totalProjects = projects.length;
   
-  const totalUnits = projects.reduce((acc, p) => {
-    return acc + (p.bedrooms || 0);
-  }, 0);
-  const formattedUnits = totalUnits > 0 ? new Intl.NumberFormat('vi-VN').format(totalUnits) + '+' : '0';
-
-  const uniqueLocations = new Set(projects.map(p => {
-    if (!p.address) return '';
-    const parts = p.address.split(',');
+  const totalLocations = new Set(projects.map(p => {
+    if (!p.location) return '';
+    const parts = p.location.split(',');
     return parts[parts.length - 1].trim();
-  }).filter(Boolean));
-  const totalLocations = uniqueLocations.size;
+  }).filter(Boolean)).size;
+
 
   const renderPagination = () => {
     if (totalPages <= 1) return null;
@@ -127,8 +114,8 @@ export default function Projects({ onViewDetail, banner }: { onViewDetail?: (id:
           <div className="projects-top-info">
             <div className="projects-title-area">
               <div className="breadcrumb">Trang chủ <span className="mx-2">&gt;</span> <span className="text-gold">Dự án</span></div>
-              <h1 className="page-title">Dự án nổi bật</h1>
-              <p className="page-subtitle">Khám phá các dự án bất động sản tiềm năng trên toàn quốc</p>
+              <h1 className="page-title">Dự án bất động sản</h1>
+              <p className="page-subtitle">Khám phá các dự án tiềm năng và quy mô lớn trên toàn quốc</p>
             </div>
 
             <div className="projects-stats">
@@ -137,13 +124,6 @@ export default function Projects({ onViewDetail, banner }: { onViewDetail?: (id:
                 <div className="stat-text">
                   <strong>{totalProjects}+</strong>
                   <span>Dự án</span>
-                </div>
-              </div>
-              <div className="stat-box">
-                <Package className="stat-icon" />
-                <div className="stat-text">
-                  <strong>{formattedUnits}</strong>
-                  <span>Sản phẩm</span>
                 </div>
               </div>
               <div className="stat-box">
@@ -177,7 +157,7 @@ export default function Projects({ onViewDetail, banner }: { onViewDetail?: (id:
                 <MapPin size={18} className="text-gold" />
                 <select value={location} onChange={(e) => setLocation(e.target.value)}>
                   <option value="all">Tất cả khu vực</option>
-                  <option value="TP. HCM">TP. Hồ Chí Minh</option>
+                  <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
                   <option value="Đồng Nai">Đồng Nai</option>
                   <option value="Vũng Tàu">Vũng Tàu</option>
                 </select>
@@ -186,27 +166,33 @@ export default function Projects({ onViewDetail, banner }: { onViewDetail?: (id:
             </div>
 
             <div className="filter-input-group">
-              <label>Loại hình dự án</label>
+              <label>Danh mục</label>
               <div className="input-wrapper">
                 <HomeIcon size={18} className="text-gold" />
-                <select value={type} onChange={(e) => setType(e.target.value)}>
+                <select value={category} onChange={(e) => setCategory(e.target.value)}>
                   <option value="all">Tất cả loại hình</option>
-                  <option value="Nhà phố">Nhà phố</option>
                   <option value="Đất nền">Đất nền</option>
+                  <option value="Căn hộ">Căn hộ</option>
+                  <option value="Nhà lầu trệt">Nhà lầu trệt</option>
+                  <option value="Nhà cấp 4">Nhà cấp 4</option>
+                  <option value="Nhà cấp 4 gác lửng">Nhà cấp 4 gác lửng</option>
+                  <option value="Biệt thự mini">Biệt thự mini</option>
+                  <option value="Biệt thự sân vườn">Biệt thự sân vườn</option>
+                  <option value="Cấp 4 sân vườn">Cấp 4 sân vườn</option>
                 </select>
                 <ChevronDown size={16} className="select-arrow" />
               </div>
             </div>
 
             <div className="filter-input-group">
-              <label>Khoảng giá</label>
+              <label>Trạng thái</label>
               <div className="input-wrapper">
-                <span className="text-gold font-bold">฿</span>
-                <select value={priceRange} onChange={(e) => setPriceRange(e.target.value)}>
-                  <option value="all">Tất cả mức giá</option>
-                  <option value="under2">Dưới 2 tỷ</option>
-                  <option value="2to10">Từ 2 - 10 tỷ</option>
-                  <option value="over10">Trên 10 tỷ</option>
+                <Bookmark size={18} className="text-gold" />
+                <select value={status} onChange={(e) => setStatus(e.target.value)}>
+                  <option value="all">Tất cả trạng thái</option>
+                  <option value="Đang mở bán">Đang mở bán</option>
+                  <option value="Sắp mở bán">Sắp mở bán</option>
+                  <option value="Đã bàn giao">Đã bàn giao</option>
                 </select>
                 <ChevronDown size={16} className="select-arrow" />
               </div>
@@ -224,31 +210,6 @@ export default function Projects({ onViewDetail, banner }: { onViewDetail?: (id:
           <div className="results-header">
             <h2>Tất cả dự án ({filteredProjects.length})</h2>
             <div className="results-actions">
-              <div className="sort-by">
-                <span>Sắp xếp:</span>
-                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                  <select 
-                    value={sortOrder}
-                    onChange={(e) => setSortOrder(e.target.value)}
-                    style={{ 
-                      appearance: 'none', 
-                      background: 'transparent', 
-                      border: 'none', 
-                      color: 'var(--text-main)', 
-                      paddingRight: '20px', 
-                      cursor: 'pointer',
-                      outline: 'none',
-                      fontFamily: 'inherit',
-                      fontSize: 'inherit'
-                    }}
-                  >
-                    <option value="newest">Mới nhất</option>
-                    <option value="priceAsc">Giá: Thấp đến cao</option>
-                    <option value="priceDesc">Giá: Cao đến thấp</option>
-                  </select>
-                  <ChevronDown size={14} style={{ position: 'absolute', right: 0, pointerEvents: 'none', color: 'var(--text-main)' }} />
-                </div>
-              </div>
               <div className="view-toggles">
                 <button className={`toggle-btn ${viewMode === 'grid' ? 'active' : ''}`} onClick={() => setViewMode('grid')}><LayoutGrid size={16} /></button>
                 <button className={`toggle-btn ${viewMode === 'list' ? 'active' : ''}`} onClick={() => setViewMode('list')}><List size={16} /></button>
@@ -264,40 +225,56 @@ export default function Projects({ onViewDetail, banner }: { onViewDetail?: (id:
                 <div 
                   className="proj-card" 
                   key={project.id}
-                  onClick={() => onViewDetail && onViewDetail(project.id)}
+                  onClick={() => onViewDetail && onViewDetail(project.slug)}
                   style={{ cursor: 'pointer' }}
                 >
                   <div className="proj-image-container">
-                    <img src={project.images?.[0]?.url || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&auto=format&fit=crop'} alt={project.title} />
-                    <span className="proj-badge">{TYPE_LABELS[project.type] || project.type}</span>
+                    <img src={project.images?.[0]?.url || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&auto=format&fit=crop'} alt={project.name} />
+                    <span className="proj-badge">{project.category || 'Dự án'}</span>
                   </div>
                   <div className="proj-content">
-                    <h3 className="proj-title">{project.title}</h3>
+                    <h3 className="proj-title">{project.name}</h3>
                     <div className="proj-location">
-                      <MapPin size={14} className="text-gold" /> {project.address}
+                      <MapPin size={14} className="text-gold" /> {formatProjectLocation(project)}
                     </div>
 
                     <div className="proj-details">
                       {project.area && (
                         <div className="detail-item">
-                          <Maximize size={14} /> {project.area} m²
+                          <Maximize size={14} /> {project.area}
                         </div>
                       )}
-                      {project.bedrooms && (
+                      {project.roomCount && (
                         <div className="detail-item">
-                          <Building size={14} /> {project.bedrooms} PN
+                          <Building size={14} /> {project.roomCount} phòng
                         </div>
                       )}
-                      {project.bathrooms && (
+                      {project.totalUnits && (
                         <div className="detail-item">
-                          <HomeIcon size={14} /> {project.bathrooms} WC
+                          <Package size={14} /> {project.totalUnits} SP
+                        </div>
+                      )}
+                      {project.status && (
+                        <div className="detail-item">
+                          <Bookmark size={14} /> {project.status}
                         </div>
                       )}
                     </div>
 
-                    <div className="proj-footer">
-                      <div className="proj-price">Từ {(Number(project.price) || 0).toLocaleString('vi-VN')} VNĐ</div>
-                      <button className="proj-details-btn" onClick={() => onViewDetail && onViewDetail(project.id)}>Xem chi tiết <ArrowRight size={14} /></button>
+                    <div className="proj-footer" style={{ borderTop: '1px solid #e2e8f0', paddingTop: '12px', marginTop: '12px' }}>
+                      <div className="proj-price" style={{ fontSize: '1.1rem', fontWeight: 700, color: '#d89f2a' }}>
+                        {project.price && Number(project.price) > 0 
+                          ? `Từ ${Number(project.price) >= 1000000000 
+                              ? (Number(project.price) / 1000000000).toFixed(1).replace('.0', '') + ' tỷ' 
+                              : Number(project.price) >= 1000000 
+                                ? (Number(project.price) / 1000000).toFixed(0) + ' triệu'
+                                : Number(project.price).toLocaleString('vi-VN')
+                            } VNĐ`
+                          : 'Liên hệ báo giá'}
+                      </div>
+                      <button className="proj-details-btn" onClick={() => onViewDetail && onViewDetail(project.slug)}>
+                        Chi tiết <ArrowRight size={14} />
+                      </button>
                     </div>
                   </div>
                 </div>

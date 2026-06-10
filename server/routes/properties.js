@@ -1,6 +1,11 @@
 import express from 'express';
 import prisma from '../prisma.js';
 import { adminMiddleware, authMiddleware } from '../middleware/auth.js';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import { createImageUpload, runSingleUpload } from '../utils/upload.js';
 
 const router = express.Router();
 
@@ -149,12 +154,6 @@ router.put('/:id', adminMiddleware, async (req, res) => {
   }
 });
 
-import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
-
-import { fileURLToPath } from 'url';
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -171,9 +170,9 @@ const storage = multer.diskStorage({
     cb(null, 'property-' + uniqueSuffix + path.extname(file.originalname));
   }
 });
-const upload = multer({ storage: storage });
+const upload = createImageUpload(storage);
 
-router.post('/upload', adminMiddleware, upload.single('image'), (req, res) => {
+router.post('/upload', adminMiddleware, runSingleUpload(upload, 'image'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'Không có file được upload.' });
   }
@@ -193,24 +192,7 @@ router.delete('/:id', adminMiddleware, async (req, res) => {
 
 // POST /api/properties/:id/favorite - Thêm/bỏ yêu thích (User)
 router.post('/:id/favorite', authMiddleware, async (req, res) => {
-  try {
-    const propertyId = parseInt(req.params.id);
-    const userId = req.user.id;
-
-    const existing = await prisma.favorite.findUnique({
-      where: { userId_propertyId: { userId, propertyId } },
-    });
-
-    if (existing) {
-      await prisma.favorite.delete({ where: { userId_propertyId: { userId, propertyId } } });
-      return res.json({ favorited: false, message: 'Đã bỏ yêu thích.' });
-    }
-
-    await prisma.favorite.create({ data: { userId, propertyId } });
-    res.json({ favorited: true, message: 'Đã thêm vào yêu thích.' });
-  } catch (error) {
-    res.status(500).json({ error: 'Lỗi khi cập nhật yêu thích.' });
-  }
+  res.status(501).json({ error: 'Tinh nang yeu thich chua duoc kich hoat.' });
 });
 
 export default router;

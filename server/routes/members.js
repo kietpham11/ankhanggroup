@@ -1,5 +1,6 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
+import { adminMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -21,7 +22,7 @@ router.get('/', async (req, res) => {
 });
 
 // POST /api/members - Thêm mới lãnh đạo
-router.post('/', async (req, res) => {
+router.post('/', adminMiddleware, async (req, res) => {
   try {
     const { name, email, avatar, position, description, isLeader, status, orderIndex, facebook, zalo, tiktok } = req.body;
     
@@ -54,7 +55,7 @@ router.post('/', async (req, res) => {
 });
 
 // PUT /api/members/:id - Cập nhật thông tin lãnh đạo
-router.put('/:id', async (req, res) => {
+router.put('/:id', adminMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     const { name, email, avatar, position, description, isLeader, status, orderIndex, facebook, zalo, tiktok } = req.body;
@@ -89,7 +90,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE /api/members/:id - Xóa thành viên
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', adminMiddleware, async (req, res) => {
   try {
     const { id } = req.params;
     

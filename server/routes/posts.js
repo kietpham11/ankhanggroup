@@ -4,6 +4,8 @@ import { adminMiddleware } from '../middleware/auth.js';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { sanitizeHtml } from '../utils/html.js';
+import { createImageUpload, runSingleUpload } from '../utils/upload.js';
 
 const router = express.Router();
 
@@ -26,7 +28,8 @@ const storage = multer.diskStorage({
     cb(null, 'post-' + uniqueSuffix + path.extname(file.originalname));
   }
 });
-const upload = multer({ storage: storage });
+const upload = createImageUpload(storage);
+const uploadThumbnail = runSingleUpload(upload, 'thumbnailFile');
 
 // GET /api/posts - Lấy danh sách bài viết (chỉ lấy bài đã published)
 router.get('/', async (req, res) => {
@@ -73,6 +76,17 @@ router.get('/admin', adminMiddleware, async (req, res) => {
 });
 
 // GET /api/posts/:slug - Chi tiết bài viết + comments
+router.get('/categories/all', async (req, res) => {
+  try {
+    const categories = await prisma.category.findMany({
+      include: { _count: { select: { posts: true } } },
+    });
+    res.json(categories);
+  } catch (error) {
+    res.status(500).json({ error: 'Loi khi lay danh muc.' });
+  }
+});
+
 router.get('/:slug', async (req, res) => {
   try {
     const post = await prisma.post.findUnique({
@@ -92,7 +106,7 @@ router.get('/:slug', async (req, res) => {
 });
 
 // POST /api/posts - Tạo bài viết mới (Admin)
-router.post('/', adminMiddleware, upload.single('thumbnailFile'), async (req, res) => {
+router.post('/', adminMiddleware, uploadThumbnail, async (req, res) => {
   try {
     const { title, slug, content, published, categoryId, authorName } = req.body;
     let thumbnailUrl = null;
@@ -104,7 +118,7 @@ router.post('/', adminMiddleware, upload.single('thumbnailFile'), async (req, re
       data: {
         title,
         slug: slug || title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]/g, ''),
-        content,
+        content: sanitizeHtml(content),
         thumbnail: thumbnailUrl,
         published: published === 'true' || published === true,
         authorName: authorName || 'Admin',
@@ -120,14 +134,14 @@ router.post('/', adminMiddleware, upload.single('thumbnailFile'), async (req, re
 });
 
 // PUT /api/posts/:id - Cập nhật bài viết (Admin)
-router.put('/:id', adminMiddleware, upload.single('thumbnailFile'), async (req, res) => {
+router.put('/:id', adminMiddleware, uploadThumbnail, async (req, res) => {
   try {
     const { title, slug, content, published, categoryId, authorName } = req.body;
     
     const updateData = {};
     if (title !== undefined) updateData.title = title;
     if (slug !== undefined) updateData.slug = slug;
-    if (content !== undefined) updateData.content = content;
+    if (content !== undefined) updateData.content = sanitizeHtml(content);
     if (published !== undefined) updateData.published = (published === 'true' || published === true);
     if (authorName !== undefined) updateData.authorName = authorName || 'Admin';
     if (categoryId !== undefined) updateData.categoryId = categoryId ? parseInt(categoryId) : null;

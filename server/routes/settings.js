@@ -1,9 +1,9 @@
 import express from 'express';
-import { PrismaClient } from '@prisma/client';
-import { authMiddleware, adminMiddleware } from '../middleware/auth.js';
+import prisma from '../prisma.js';
+import { adminMiddleware } from '../middleware/auth.js';
+import { createImageUpload, runSingleUpload } from '../utils/upload.js';
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // GET /api/settings/:key
 router.get('/:key', async (req, res) => {
@@ -92,9 +92,9 @@ const storage = multer.diskStorage({
     cb(null, 'banner-' + uniqueSuffix + path.extname(file.originalname));
   }
 });
-const upload = multer({ storage: storage });
+const upload = createImageUpload(storage);
 
-router.post('/upload', adminMiddleware, upload.single('image'), (req, res) => {
+router.post('/upload', adminMiddleware, runSingleUpload(upload, 'image'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'Không có file được upload.' });
   }

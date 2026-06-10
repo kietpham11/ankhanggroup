@@ -2,27 +2,9 @@ import React, { useState, useEffect } from 'react';
 import {
   Building2, Search, MapPin, BadgeDollarSign, Maximize,
   ShieldCheck, Map, Clock, Heart, BedDouble, Bath, ChevronRight, ChevronLeft,
-  LayoutDashboard, Briefcase
+  LayoutDashboard, Briefcase, ArrowRight
 } from 'lucide-react';
-import { propertiesAPI } from '../lib/api';
-
-interface Property {
-  id: number;
-  title: string;
-  slug: string;
-  address: string;
-  price: string;
-  area: number;
-  bedrooms?: number;
-  bathrooms?: number;
-  type: string;
-  status: string;
-  images: { url: string }[];
-}
-
-const TYPE_LABELS: Record<string, string> = {
-  LAND: 'Đất nền', HOUSE: 'Nhà phố',
-};
+import { projectsAPI } from '../lib/api';
 
 const bannerImages = [
   "/images/banner1.png",
@@ -31,22 +13,30 @@ const bannerImages = [
 ];
 
 interface HomeProps {
-  onViewDetail?: (id: number) => void;
+  onViewDetail?: (slug: string) => void;
   onViewAllProjects?: () => void;
   banners?: string[];
 }
 
 export default function Home({ onViewDetail, onViewAllProjects, banners = [] }: HomeProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [properties, setProperties] = useState<Property[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    propertiesAPI.getAll({ showOnHome: 'true' })
-      .then(setProperties)
+    projectsAPI.getAll({ showOnHome: 'true' })
+      .then((data: any[]) => {
+        // Chỉ hiển thị dự án đã được admin bật "Hiển thị trang chủ" hoặc "Nổi bật"
+        setProjects(data.slice(0, 4));
+      })
       .catch(console.error)
       .finally(() => setIsLoading(false));
   }, []);
+
+  const formatProjectLocation = (project: any) => {
+    const parts = [project.ward, project.province].filter(Boolean);
+    return parts.length ? parts.join(', ') : (project.location || 'Đang cập nhật');
+  };
 
   const displayBanners = banners && banners.length > 0 ? banners : bannerImages;
 
@@ -59,6 +49,19 @@ export default function Home({ onViewDetail, onViewAllProjects, banners = [] }: 
 
   const nextSlide = () => setCurrentSlide(prev => (prev + 1) % displayBanners.length);
   const prevSlide = () => setCurrentSlide(prev => (prev - 1 + displayBanners.length) % displayBanners.length);
+
+  const formatPrice = (price: string | number | null | undefined) => {
+    if (!price) return null;
+    const num = Number(price);
+    if (isNaN(num) || num === 0) return null;
+    if (num >= 1000000000) {
+      return `${(num / 1000000000).toFixed(1).replace('.0', '')} tỷ`;
+    }
+    if (num >= 1000000) {
+      return `${(num / 1000000).toFixed(0)} triệu`;
+    }
+    return num.toLocaleString('vi-VN');
+  };
 
   return (
     <>
@@ -106,11 +109,11 @@ export default function Home({ onViewDetail, onViewAllProjects, banners = [] }: 
         ))}
       </section>
 
-      {/* FEATURED PROPERTIES */}
-      {(!isLoading && properties.length === 0) ? null : (
-        <section className="featured-section" id="properties">
+      {/* DỰ ÁN NỔI BẬT */}
+      {(!isLoading && projects.length === 0) ? null : (
+        <section className="featured-section" id="projects">
         <div className="section-header">
-          <h3 className="section-title">Bất Động Sản Nổi Bật</h3>
+          <h3 className="section-title">Dự Án Nổi Bật</h3>
           <a 
             href="#projects" 
             className="view-all" 
@@ -124,41 +127,43 @@ export default function Home({ onViewDetail, onViewAllProjects, banners = [] }: 
         </div>
 
         {isLoading ? (
-          <div className="loading-state">Đang tải bất động sản...</div>
+          <div className="loading-state">Đang tải dự án...</div>
         ) : (
           <div className="property-grid">
-            {properties.map(prop => (
+            {projects.map(project => (
               <div 
                 className="property-card" 
-                key={prop.id}
-                onClick={() => onViewDetail && onViewDetail(prop.id)}
+                key={project.id}
+                onClick={() => onViewDetail && onViewDetail(project.slug)}
                 style={{ cursor: 'pointer' }}
               >
                 <div className="card-image-wrapper">
-                  <span className="card-badge">{TYPE_LABELS[prop.type] || prop.type}</span>
+                  <span className="card-badge">{project.category || 'Dự án'}</span>
                   <img
-                    src={prop.images?.[0]?.url || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&auto=format&fit=crop'}
-                    alt={prop.title}
+                    src={project.images?.[0]?.url || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&auto=format&fit=crop'}
+                    alt={project.name}
                     className="card-image"
                   />
                 </div>
                 <div className="card-content">
-                  <h4 className="card-title">{prop.title}</h4>
-                  <p className="card-address"><MapPin size={14} /> {prop.address}</p>
+                  <h4 className="card-title">{project.name}</h4>
+                  <p className="card-address"><MapPin size={14} /> {formatProjectLocation(project)}</p>
                   <div className="card-stats">
-                    <div className="stat-item"><Maximize className="stat-icon" size={14} /> {prop.area} m²</div>
-                    {prop.bedrooms != null && prop.bedrooms > 0 && (
-                      <div className="stat-item"><BedDouble className="stat-icon" size={14} /> {prop.bedrooms} PN</div>
+                    {project.area && (
+                      <div className="stat-item"><Maximize className="stat-icon" size={14} /> {project.area}</div>
                     )}
-                    {prop.bathrooms != null && prop.bathrooms > 0 && (
-                      <div className="stat-item"><Bath className="stat-icon" size={14} /> {prop.bathrooms} WC</div>
+                    {project.roomCount && (
+                      <div className="stat-item"><Building2 className="stat-icon" size={14} /> {project.roomCount} phòng</div>
+                    )}
+                    {project.totalUnits && (
+                      <div className="stat-item"><Building2 className="stat-icon" size={14} /> {project.totalUnits} SP</div>
                     )}
                   </div>
                   <div className="card-footer">
                     <div className="card-price">
-                      Từ {Number(prop.price).toLocaleString('vi-VN')} VNĐ
+                      {formatPrice(project.price) ? `Từ ${formatPrice(project.price)} VNĐ` : 'Liên hệ'}
                     </div>
-                    <div className="card-status">{prop.status === 'AVAILABLE' ? 'Đang bán' : prop.status === 'SOLD' ? 'Đã bán' : 'Cho thuê'}</div>
+                    <div className="card-status">{project.status || 'Đang mở bán'}</div>
                   </div>
                 </div>
               </div>

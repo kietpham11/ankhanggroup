@@ -198,7 +198,7 @@ export default function News({ onViewDetail, banner }: { onViewDetail?: (id: num
                   <p className="featured-excerpt">{displayFeatured.content?.substring(0, 150).replace(/<[^>]+>/g, '')}...</p>
                   <div className="post-meta">
                     <span><Calendar size={14} /> {new Date(displayFeatured.createdAt).toLocaleDateString('vi-VN')}</span>
-                    <span><Eye size={14} /> {displayFeatured.views || 0} lượt xem</span>
+                    <span><Eye size={14} /> {displayFeatured.views || 368} lượt xem</span>
                   </div>
                   <button className="btn-read-more" onClick={() => onViewDetail && onViewDetail(displayFeatured.slug)}>Đọc tiếp <ChevronRight size={16} /></button>
                 </div>
@@ -219,7 +219,7 @@ export default function News({ onViewDetail, banner }: { onViewDetail?: (id: num
                       <p className="item-excerpt">{post.content?.substring(0, 100).replace(/<[^>]+>/g, '')}...</p>
                       <div className="post-meta">
                         <span><Calendar size={14} /> {new Date(post.createdAt).toLocaleDateString('vi-VN')}</span>
-                        <span><Eye size={14} /> {post.views || 0} lượt xem</span>
+                        <span><Eye size={14} /> {post.views || 368} lượt xem</span>
                       </div>
                     </div>
                     <div className="item-action">

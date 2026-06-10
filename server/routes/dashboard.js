@@ -16,7 +16,6 @@ router.get('/stats', adminMiddleware, async (req, res) => {
       pendingContacts,
       totalPosts,
       totalProjects,
-      totalUsers,
       projectStatusGroup,
       topPropertiesQuery,
       contactsInRange,
@@ -27,7 +26,6 @@ router.get('/stats', adminMiddleware, async (req, res) => {
       prisma.contact.count({ where: { status: 'PENDING' } }),
       prisma.post.count({ where: { published: true } }),
       prisma.project.count(),
-      prisma.user.count({ where: { role: 'USER' } }),
       prisma.project.groupBy({
         by: ['status'],
         _count: { id: true }
@@ -110,7 +108,7 @@ router.get('/stats', adminMiddleware, async (req, res) => {
         pendingContacts,
         totalPosts,
         totalProjects,
-        totalUsers,
+        totalUsers: totalProperties,
       },
       contactsReport,
       projectStatusDistribution,

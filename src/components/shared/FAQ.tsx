@@ -9,7 +9,7 @@ const faqs = [
     answer: (
       <>
         Bạn có thể đặt lịch xem nhà/dự án dễ dàng qua website bằng cách chọn dự án và nhấn "Đặt lịch xem".
-        Ngoài ra, bạn cũng có thể liên hệ trực tiếp với chúng tôi qua hotline <span className="text-gold font-medium">0985 943 567</span> hoặc email <span className="text-gold font-medium">ankhanggroup.realestate@gmail.com</span> để được hỗ trợ nhanh chóng.
+        Ngoài ra, bạn cũng có thể liên hệ trực tiếp với chúng tôi qua hotline <span className="text-gold font-medium">097 789 67 77</span> hoặc email <span className="text-gold font-medium">ankhanggroup.realestate@gmail.com</span> để được hỗ trợ nhanh chóng.
       </>
     )
   },

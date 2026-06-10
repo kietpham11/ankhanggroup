@@ -73,7 +73,10 @@ export const propertiesAPI = {
 
 // ====================== PROJECTS ======================
 export const projectsAPI = {
-  getAll: () => request('/projects'),
+  getAll: (params?: Record<string, string>) => {
+    const qs = params ? '?' + new URLSearchParams(params).toString() : '';
+    return request(`/projects${qs}`);
+  },
   getBySlug: (slug: string) => request(`/projects/${slug}`),
   create: (data: Record<string, unknown>) =>
     request('/projects', { method: 'POST', body: JSON.stringify(data) }),

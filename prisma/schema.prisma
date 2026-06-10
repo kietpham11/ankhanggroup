@@ -27,21 +27,40 @@ model Member {
 }
 
 model Project {
-  id          Int            @id @default(autoincrement())
-  name        String
-  slug        String         @unique
-  description String?        @db.Text
-  content     String?        @db.Text
-  location    String?
-  status      String?
-  views       Int            @default(0)
-  isFeatured  Boolean        @default(false)
-  startDate   DateTime?
-  endDate     DateTime?
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-  images      ProjectImage[]
-  properties  Property[]
+  id             Int            @id @default(autoincrement())
+  name           String
+  slug           String         @unique
+  description    String?        @db.Text
+  content        String?        @db.Text
+  location       String?
+  category       String?
+  province       String?
+  district       String?
+  ward           String?
+  area           String?
+  roomCount      String?
+  amenities      String?        @db.Text
+  developer      String?
+  ownership      String?
+  partner        String?
+  totalUnits     String?
+  legal          String?
+  handoverDate   String?
+  mapAddress     String?        @db.Text
+  mapCoordinates String?        @db.Text
+  mapImage       String?        @db.Text
+  status         String?
+  price          String?
+  views          Int            @default(0)
+  isFeatured     Boolean        @default(false)
+  showOnHome     Boolean        @default(false)
+  displayOrder   Int            @default(0)
+  startDate      DateTime?
+  endDate        DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  images         ProjectImage[]
+  properties     Property[]
 
   @@map("projects")
 }

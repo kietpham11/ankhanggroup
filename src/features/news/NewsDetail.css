@@ -356,77 +356,94 @@
 
 /* NEWSLETTER */
 .nd-newsletter {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
+  background: linear-gradient(135deg, var(--navy-primary, #173a6a) 0%, #1e4d8a 100%);
   border-radius: 12px;
-  padding: 2rem;
+  padding: 2.5rem 3rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 2rem;
   margin-bottom: 2rem;
 }
 
 .nd-nl-left {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.25rem;
+  flex-shrink: 0;
 }
 
 .nd-nl-icon {
-  width: 56px;
-  height: 56px;
-  background: rgba(212, 160, 23, 0.1);
-  border-radius: 50%;
+  width: 52px;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+.nd-nl-icon .text-gold {
+  color: var(--gold-accent) !important;
+}
+
 .nd-nl-left h4 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.2rem;
-  color: var(--text-main);
+  margin: 0 0 0.25rem 0;
+  font-size: 1.15rem;
+  color: #fff;
+  font-weight: 700;
 }
 
 .nd-nl-left p {
   margin: 0;
-  color: var(--text-muted, #4B5A73);
-  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
 }
 
 .nd-nl-right {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  background: var(--primary-color);
-  padding: 0.5rem;
-  border-radius: 50px;
-  border: 1px solid var(--border-color);
-  width: 450px;
+  gap: 0.75rem;
+  flex: 1;
 }
 
 .nd-nl-right input {
   flex: 1;
+  min-width: 0;
   border: none;
-  background: transparent;
-  padding: 0.5rem 1rem;
-  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.12);
+  padding: 1rem 1.25rem;
+  color: #fff;
   outline: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+
+.nd-nl-right input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.nd-nl-right input:focus {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .nd-nl-right .btn-solid-gold {
   background: var(--gold-accent);
   color: #fff;
   border: none;
-  padding: 0.8rem 2rem;
-  border-radius: 40px;
+  padding: 1rem 2.5rem;
+  border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
+  font-size: 0.95rem;
 }
 
 .nd-nl-right .btn-solid-gold:hover {
   background: var(--gold-hover);
+  transform: translateY(-1px);
 }
 
 @media (max-width: 1024px) {
@@ -436,12 +453,14 @@
   
   .nd-newsletter {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 1.5rem;
+    padding: 2rem;
   }
   
   .nd-nl-right {
-    width: 100%;
+    max-width: 100%;
+    flex-wrap: wrap;
   }
 }
 
