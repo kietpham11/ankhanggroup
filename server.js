@@ -5,7 +5,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import { LEGACY_UPLOAD_ROOT, UPLOAD_ROOT } from './server/utils/upload.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -81,14 +80,6 @@ app.use('/api', limiter); // Chỉ áp dụng giới hạn cho các API
 app.use(express.json({ limit: '10mb' })); // Giới hạn dung lượng body
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Serve persistent uploads first, then fallback to legacy repo uploads.
-app.use('/uploads', express.static(UPLOAD_ROOT));
-if (UPLOAD_ROOT !== LEGACY_UPLOAD_ROOT) {
-  app.use('/uploads', express.static(LEGACY_UPLOAD_ROOT));
-}
-app.use('/uploads', (req, res) => {
-  res.status(404).json({ error: 'Uploaded file not found.' });
-});
 
 // ====================== API ROUTES ======================
 app.use('/api/auth',        authRoutes);
