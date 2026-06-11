@@ -157,7 +157,7 @@ router.post('/upload', adminMiddleware, runSingleUpload(upload, 'image'), (req, 
   if (!req.file) {
     return res.status(400).json({ error: 'Không có file được upload.' });
   }
-  res.json({ url: `/uploads/properties/${req.file.filename}` });
+  res.json({ url: req.file.path });
 });
 
 // DELETE /api/properties/:id - Xoá BĐS (Admin only)

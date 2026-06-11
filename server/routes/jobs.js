@@ -145,10 +145,9 @@ router.post('/:id/candidates', runSingleUpload(upload, 'cvFile'), async (req, re
   try {
     const { name, email, phone, coverLetter } = req.body;
     
-    // Nếu upload file thành công, gán đường dẫn
     let cvUrl = req.body.cvUrl || '';
     if (req.file) {
-      cvUrl = '/uploads/cvs/' + req.file.filename;
+      cvUrl = req.file.path;
     }
 
     const newCandidate = await prisma.candidate.create({

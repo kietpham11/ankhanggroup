@@ -77,7 +77,7 @@ router.post('/upload', adminMiddleware, runSingleUpload(upload, 'image'), (req, 
   if (!req.file) {
     return res.status(400).json({ error: 'Không có file được upload.' });
   }
-  res.json({ url: `/uploads/settings/${req.file.filename}` });
+  res.json({ url: req.file.path });
 });
 
 export default router;

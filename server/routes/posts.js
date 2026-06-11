@@ -92,7 +92,7 @@ router.post('/', adminMiddleware, uploadThumbnail, async (req, res) => {
     const { title, slug, content, published, categoryId, authorName } = req.body;
     let thumbnailUrl = null;
     if (req.file) {
-      thumbnailUrl = `/uploads/posts/${req.file.filename}`;
+      thumbnailUrl = req.file.path;
     }
 
     const post = await prisma.post.create({
@@ -128,7 +128,7 @@ router.put('/:id', adminMiddleware, uploadThumbnail, async (req, res) => {
     if (categoryId !== undefined) updateData.categoryId = categoryId ? parseInt(categoryId) : null;
 
     if (req.file) {
-      updateData.thumbnail = `/uploads/posts/${req.file.filename}`;
+      updateData.thumbnail = req.file.path;
     }
 
     const post = await prisma.post.update({
