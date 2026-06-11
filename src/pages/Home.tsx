@@ -33,6 +33,13 @@ export default function Home({ onViewDetail, onViewAllProjects, banners = [] }: 
       .finally(() => setIsLoading(false));
   }, []);
 
+  const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const getImgUrl = (path: string) => {
+    if (!path) return 'https://placehold.co/600x400?text=No+Image';
+    if (path.startsWith('http')) return path;
+    return `${BASE_URL.replace('/api', '')}${path}`;
+  };
+
   const formatProjectLocation = (project: any) => {
     const parts = [project.ward, project.province].filter(Boolean);
     return parts.length ? parts.join(', ') : (project.location || 'Đang cập nhật');
@@ -140,7 +147,7 @@ export default function Home({ onViewDetail, onViewAllProjects, banners = [] }: 
                 <div className="card-image-wrapper">
                   <span className="card-badge">{project.category || 'Dự án'}</span>
                   <img
-                    src={project.images?.[0]?.url || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&auto=format&fit=crop'}
+                    src={getImgUrl(project.images?.[0]?.url)}
                     alt={project.name}
                     className="card-image"
                   />

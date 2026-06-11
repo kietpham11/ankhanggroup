@@ -53,11 +53,18 @@ export default function ProjectDetail({ onBack, projectSlug }: ProjectDetailProp
     }
   };
 
+  const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const getImgUrl = (path: string) => {
+    if (!path) return 'https://placehold.co/1200x600?text=No+Image';
+    if (path.startsWith('http')) return path;
+    return `${BASE_URL.replace('/api', '')}${path}`;
+  };
+
   const defaultImages = [
     "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2000&auto=format&fit=crop"
   ];
   const images = project?.images?.length > 0 
-    ? project.images.map((img: any) => img.url) 
+    ? project.images.map((img: any) => getImgUrl(img.url)) 
     : defaultImages;
 
   const nextImage = () => setCurrentImageIndex(prev => (prev + 1) % images.length);
@@ -241,7 +248,7 @@ export default function ProjectDetail({ onBack, projectSlug }: ProjectDetailProp
               )}
               <div className="pd-map-image-box">
                 {project.mapImage ? (
-                  <img src={project.mapImage} alt={`Vị trí dự án ${project.name}`} />
+                  <img src={getImgUrl(project.mapImage)} alt={`Vị trí dự án ${project.name}`} />
                 ) : (
                   <div className="pd-map-image-empty">Chưa có ảnh vị trí</div>
                 )}

@@ -19,6 +19,13 @@ export default function Projects({ onViewDetail, banner }: { onViewDetail?: (slu
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
+  const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const getImgUrl = (path: string) => {
+    if (!path) return 'https://placehold.co/600x400?text=No+Image';
+    if (path.startsWith('http')) return path;
+    return `${BASE_URL.replace('/api', '')}${path}`;
+  };
+
   useEffect(() => {
     projectsAPI.getAll()
       .then(setProjects)
@@ -229,7 +236,7 @@ export default function Projects({ onViewDetail, banner }: { onViewDetail?: (slu
                   style={{ cursor: 'pointer' }}
                 >
                   <div className="proj-image-container">
-                    <img src={project.images?.[0]?.url || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&auto=format&fit=crop'} alt={project.name} />
+                    <img src={getImgUrl(project.images?.[0]?.url)} alt={project.name} />
                     <span className="proj-badge">{project.category || 'Dự án'}</span>
                   </div>
                   <div className="proj-content">
