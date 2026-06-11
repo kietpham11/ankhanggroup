@@ -4,7 +4,7 @@ import {
   AlignLeft, AlignCenter, AlignRight, Link, Image as ImageIcon, 
   Quote, Grid, Undo, Redo, ImagePlus, Send, X
 } from 'lucide-react';
-import { postsAPI } from '../../../lib/api';
+import { getFullImgUrl, postsAPI } from '../../../lib/api';
 import './AddPost.css';
 
 interface AddPostProps {
@@ -32,9 +32,7 @@ export default function AddPost({ onBack, isEdit, postData }: AddPostProps) {
     
     // Initialize image
     if (postData?.thumbnail) {
-      const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-      const imgUrl = postData.thumbnail.startsWith('http') ? postData.thumbnail : BASE_URL.replace('/api', '') + postData.thumbnail;
-      setFeaturedImage(imgUrl);
+      setFeaturedImage(getFullImgUrl(postData.thumbnail));
     }
   }, [postData]);
 

@@ -4,7 +4,7 @@ import {
   ShieldCheck, Map, Clock, Heart, BedDouble, Bath, ChevronRight, ChevronLeft,
   LayoutDashboard, Briefcase, ArrowRight
 } from 'lucide-react';
-import { projectsAPI } from '../lib/api';
+import { getFullImgUrl, projectsAPI } from '../lib/api';
 
 const bannerImages = [
   "/images/banner1.png",
@@ -33,11 +33,9 @@ export default function Home({ onViewDetail, onViewAllProjects, banners = [] }: 
       .finally(() => setIsLoading(false));
   }, []);
 
-  const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
   const getImgUrl = (path: string) => {
     if (!path) return 'https://placehold.co/600x400?text=No+Image';
-    if (path.startsWith('http')) return path;
-    return `${BASE_URL.replace('/api', '')}${path}`;
+    return getFullImgUrl(path);
   };
 
   const formatProjectLocation = (project: any) => {

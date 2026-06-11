@@ -3,7 +3,7 @@ import {
   Search, Calendar, Eye, ChevronRight, Star,
   Send, ShieldCheck, TrendingUp, Headphones, Lock
 } from 'lucide-react';
-import { postsAPI, contactsAPI } from '../../lib/api';
+import { postsAPI, contactsAPI, getFullImgUrl } from '../../lib/api';
 import './News.css';
 
 export default function News({ onViewDetail, banner }: { onViewDetail?: (id: number | string) => void, banner?: string }) {
@@ -78,11 +78,9 @@ export default function News({ onViewDetail, banner }: { onViewDetail?: (id: num
 
   const popularPosts = posts.slice(0, 4); // Just mock popular as first 4 for now
 
-  const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
   const getImgUrl = (path: string) => {
     if (!path) return 'https://placehold.co/600x400?text=No+Image';
-    if (path.startsWith('http')) return path;
-    return BASE_URL.replace('/api', '') + path;
+    return getFullImgUrl(path);
   };
 
   useEffect(() => {

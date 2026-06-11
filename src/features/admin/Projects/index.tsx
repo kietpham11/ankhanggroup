@@ -7,7 +7,7 @@ import {
 import ProjectDetail from './ProjectDetail';
 import ProjectEdit from './ProjectEdit';
 import DeleteProjectModal from './components/DeleteProjectModal';
-import { projectsAPI } from '../../../lib/api';
+import { getFullImgUrl, projectsAPI } from '../../../lib/api';
 import './Projects.css';
 
 const parseDateToTime = (dateStr: string) => {
@@ -356,7 +356,7 @@ export default function Projects() {
                   <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                   <td>
                     <div className="ap-project-cell">
-                      <img src={proj.image} alt={proj.name} />
+                      <img src={getFullImgUrl(proj.image)} alt={proj.name} />
                       <div className="ap-project-info">
                         <span className="ap-project-name">{proj.name}</span>
                         <span className="ap-project-code">Mã dự án: {proj.code}</span>

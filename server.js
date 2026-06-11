@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import { LEGACY_UPLOAD_ROOT, UPLOAD_ROOT } from './server/utils/upload.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -35,15 +36,27 @@ app.use(helmet({
 // app.use(xss());
 
 // CORS configuration
-const allowedOrigins = [
+const normalizeOrigin = (origin) => origin.replace(/\/+$/, '');
+const envOrigins = [
   process.env.CLIENT_URL,
+  process.env.CLIENT_URLS,
+]
+  .filter(Boolean)
+  .flatMap((value) => value.split(','))
+  .map((value) => normalizeOrigin(value.trim()))
+  .filter(Boolean);
+
+const allowedOrigins = new Set([
+  ...envOrigins,
   'http://localhost:5173',
-  'https://ankhang-real-estate.vercel.app'
-];
+  'http://localhost:4173',
+  'http://localhost:5000',
+  'https://ankhang-real-estate.vercel.app',
+]);
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || allowedOrigins.has(normalizeOrigin(origin))) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -68,8 +81,14 @@ app.use('/api', limiter); // Chỉ áp dụng giới hạn cho các API
 app.use(express.json({ limit: '10mb' })); // Giới hạn dung lượng body
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Serve static files from uploads folder
-app.use('/uploads', express.static(path.join(__dirname, 'server/uploads')));
+// Serve persistent uploads first, then fallback to legacy repo uploads.
+app.use('/uploads', express.static(UPLOAD_ROOT));
+if (UPLOAD_ROOT !== LEGACY_UPLOAD_ROOT) {
+  app.use('/uploads', express.static(LEGACY_UPLOAD_ROOT));
+}
+app.use('/uploads', (req, res) => {
+  res.status(404).json({ error: 'Uploaded file not found.' });
+});
 
 // ====================== API ROUTES ======================
 app.use('/api/auth',        authRoutes);

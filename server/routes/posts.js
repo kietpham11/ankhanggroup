@@ -1,33 +1,14 @@
 import express from 'express';
 import prisma from '../prisma.js';
 import { adminMiddleware } from '../middleware/auth.js';
-import multer from 'multer';
-import path from 'path';
 import fs from 'fs';
 import { sanitizeHtml } from '../utils/html.js';
-import { createImageUpload, runSingleUpload } from '../utils/upload.js';
+import { createImageUpload, createUploadStorage, runSingleUpload } from '../utils/upload.js';
 
 const router = express.Router();
 
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 // Setup Multer for post thumbnail uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const uploadDir = path.join(__dirname, '../uploads/posts/');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'post-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
+const storage = createUploadStorage('posts', 'post-');
 const upload = createImageUpload(storage);
 const uploadThumbnail = runSingleUpload(upload, 'thumbnailFile');
 

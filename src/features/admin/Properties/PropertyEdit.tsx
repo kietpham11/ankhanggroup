@@ -5,7 +5,7 @@ import {
   AlignLeft, AlignCenter, AlignRight, AlignJustify, Link, Image as ImageIcon, MoreHorizontal, ChevronDown
 } from 'lucide-react';
 import './PropertyEdit.css';
-import { propertiesAPI } from '../../../lib/api';
+import { getFullImgUrl, propertiesAPI } from '../../../lib/api';
 
 interface PropertyEditProps {
   property: any;
@@ -368,7 +368,7 @@ export default function PropertyEdit({ property, onBack, onSave }: PropertyEditP
             <h3 className="ape-card-title">Hình ảnh bất động sản</h3>
             
             <div className="ape-gallery-main">
-              <img src={mainImage} alt="Main property" />
+              <img src={getFullImgUrl(mainImage)} alt="Main property" />
               <button className="ape-camera-btn" onClick={() => mainImageInputRef.current?.click()}>
                 <Camera size={16} />
               </button>
@@ -378,7 +378,7 @@ export default function PropertyEdit({ property, onBack, onSave }: PropertyEditP
             <div className="ape-gallery-thumbs">
               {gallery.map((img: string, idx: number) => (
                 <div key={idx} style={{ position: 'relative' }}>
-                  <img src={img} alt={`Thumb ${idx}`} className="ape-gallery-thumb" />
+                  <img src={getFullImgUrl(img)} alt={`Thumb ${idx}`} className="ape-gallery-thumb" />
                   <button 
                     style={{ position: 'absolute', top: -5, right: -5, background: 'red', color: 'white', border: 'none', borderRadius: '50%', width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
                     onClick={() => removeGalleryImage(idx)}
@@ -402,7 +402,7 @@ export default function PropertyEdit({ property, onBack, onSave }: PropertyEditP
               <h4 style={{ fontSize: '0.9rem', marginBottom: '1rem', color: 'var(--navy-blue)' }}>Ảnh Bản Đồ (Map Image)</h4>
               <div className="ape-gallery-main" style={{ height: '150px' }}>
                 {mapImage ? (
-                  <img src={mapImage} alt="Map image" style={{ objectFit: 'cover' }} />
+                  <img src={getFullImgUrl(mapImage)} alt="Map image" style={{ objectFit: 'cover' }} />
                 ) : (
                   <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', color: '#94a3b8' }}>
                     Chưa có ảnh bản đồ

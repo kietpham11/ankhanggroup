@@ -5,7 +5,7 @@ import {
   Phone, Mail, FileText, Download, Check
 } from 'lucide-react';
 import './Candidates.css';
-import { candidatesAPI } from '../../../lib/api';
+import { candidatesAPI, getFullImgUrl } from '../../../lib/api';
 const parseDateToTime = (dateStr: string) => {
   if (!dateStr) return 0;
   return new Date(dateStr).getTime();
@@ -406,9 +406,7 @@ export default function Candidates() {
                       alert('Ứng viên này chưa cập nhật CV.');
                       return;
                     }
-                    const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-                    const fileUrl = viewCandidate.cvUrl.startsWith('http') ? viewCandidate.cvUrl : BASE_URL.replace('/api', '') + viewCandidate.cvUrl;
-                    window.open(fileUrl, '_blank');
+                    window.open(getFullImgUrl(viewCandidate.cvUrl), '_blank');
                   }}>
                     <Download size={18} />
                   </button>

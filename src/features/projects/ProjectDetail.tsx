@@ -4,7 +4,7 @@ import {
   ChevronLeft, ChevronRight, CheckCircle2, Package
 } from 'lucide-react';
 import LoanCalculator from '../../components/shared/LoanCalculator';
-import { contactsAPI, projectsAPI } from '../../lib/api';
+import { contactsAPI, getFullImgUrl, projectsAPI } from '../../lib/api';
 import './ProjectDetail.css';
 
 interface ProjectDetailProps {
@@ -53,11 +53,9 @@ export default function ProjectDetail({ onBack, projectSlug }: ProjectDetailProp
     }
   };
 
-  const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
   const getImgUrl = (path: string) => {
     if (!path) return 'https://placehold.co/1200x600?text=No+Image';
-    if (path.startsWith('http')) return path;
-    return `${BASE_URL.replace('/api', '')}${path}`;
+    return getFullImgUrl(path);
   };
 
   const defaultImages = [

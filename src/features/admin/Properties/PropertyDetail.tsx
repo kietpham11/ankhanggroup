@@ -3,6 +3,7 @@ import {
   ArrowLeft, MapPin, Calendar, User, 
   Edit, Box, FileText, RefreshCw, Trash, X, Plus
 } from 'lucide-react';
+import { getFullImgUrl } from '../../../lib/api';
 import './PropertyDetail.css';
 
 interface PropertyDetailProps {
@@ -27,7 +28,7 @@ export default function PropertyDetail({ property, onBack, onEdit, onDelete }: P
 
       {/* Top Card */}
       <div className="apd-top-card">
-        <img src={property.image} alt={property.name} className="apd-thumbnail" />
+        <img src={getFullImgUrl(property.image)} alt={property.name} className="apd-thumbnail" />
         <div className="apd-top-info">
           <div className="apd-title-row">
             <h2>{property.name}</h2>
@@ -116,7 +117,7 @@ export default function PropertyDetail({ property, onBack, onEdit, onDelete }: P
               <h3 className="apd-gallery-title">Hình ảnh bất động sản</h3>
               <div className="apd-gallery-grid">
                 {property.gallery.map((img: string, idx: number) => (
-                  <img key={idx} src={img} alt="Gallery" className="apd-gallery-img" />
+                  <img key={idx} src={getFullImgUrl(img)} alt="Gallery" className="apd-gallery-img" />
                 ))}
                 <div className="apd-gallery-add" onClick={() => alert('Thêm hình ảnh')}>
                   <Plus size={24} />

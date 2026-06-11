@@ -7,7 +7,7 @@ import {
 import PropertyDetail from './PropertyDetail';
 import PropertyEdit from './PropertyEdit';
 import DeletePropertyModal from './components/DeletePropertyModal';
-import { propertiesAPI } from '../../../lib/api';
+import { getFullImgUrl, propertiesAPI } from '../../../lib/api';
 import './Properties.css';
 
 const parseDateToTime = (dateStr: string) => {
@@ -302,7 +302,7 @@ export default function Propertys() {
                   <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                   <td>
                     <div className="ap-property-cell">
-                      <img src={proj.image} alt={proj.name} />
+                      <img src={getFullImgUrl(proj.image)} alt={proj.name} />
                       <div className="ap-property-info">
                         <span className="ap-property-name">{proj.name}</span>
                         <span className="ap-property-code">Mã bất động sản: {proj.code}</span>

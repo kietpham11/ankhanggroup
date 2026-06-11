@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import DeletePostModal from './components/DeletePostModal';
 import CategoryModal from './components/CategoryModal';
-import { postsAPI } from '../../../lib/api';
+import { getFullImgUrl, postsAPI } from '../../../lib/api';
 import './Posts.css';
 
 interface AdminPostsProps {
@@ -217,8 +217,7 @@ export default function Posts({ onEdit }: AdminPostsProps) {
                 </tr>
               ) : currentPosts.map((post, index) => {
                 const isPublished = post.published;
-                const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-                const imgUrl = post.thumbnail ? (post.thumbnail.startsWith('http') ? post.thumbnail : BASE_URL.replace('/api', '') + post.thumbnail) : 'https://placehold.co/100x100?text=No+Image';
+                const imgUrl = post.thumbnail ? getFullImgUrl(post.thumbnail) : 'https://placehold.co/100x100?text=No+Image';
                 return (
                 <tr key={post.id}>
                   <td className="ap-text-cell">{(currentPage - 1) * itemsPerPage + index + 1}</td>

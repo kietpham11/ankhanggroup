@@ -1,11 +1,7 @@
 import express from 'express';
 import prisma from '../prisma.js';
 import { adminMiddleware, authMiddleware } from '../middleware/auth.js';
-import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
-import { createImageUpload, runSingleUpload } from '../utils/upload.js';
+import { createImageUpload, createUploadStorage, runSingleUpload } from '../utils/upload.js';
 
 const router = express.Router();
 
@@ -154,22 +150,7 @@ router.put('/:id', adminMiddleware, async (req, res) => {
   }
 });
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const uploadDir = path.join(__dirname, '../uploads/properties/');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'property-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
+const storage = createUploadStorage('properties', 'property-');
 const upload = createImageUpload(storage);
 
 router.post('/upload', adminMiddleware, runSingleUpload(upload, 'image'), (req, res) => {

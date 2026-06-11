@@ -6,8 +6,23 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Đang khởi tạo dữ liệu...\n');
 
-  // Không còn bảng User
+  // Tạo tài khoản Admin mặc định nếu chưa có
+  const existingAdmin = await prisma.user.findUnique({
+    where: { email: 'admin@ankhang.com' }
+  });
 
+  if (!existingAdmin) {
+    const hashedPassword = await bcrypt.hash('Ankhang@2026!', 10);
+    await prisma.user.create({
+      data: {
+        name: 'Admin',
+        email: 'admin@ankhang.com',
+        password: hashedPassword,
+        role: 'ADMIN'
+      }
+    });
+    console.log('✅ Đã tạo tài khoản Admin mặc định: admin@ankhang.com');
+  }
   // Tạo danh mục bài viết
   const categories = await Promise.all([
     prisma.category.upsert({

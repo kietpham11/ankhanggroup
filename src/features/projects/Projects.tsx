@@ -5,7 +5,7 @@ import {
   Maximize, Building, Home as HomeIcon
 } from 'lucide-react';
 import LoanCalculator from '../../components/shared/LoanCalculator';
-import { projectsAPI } from '../../lib/api';
+import { getFullImgUrl, projectsAPI } from '../../lib/api';
 import './Projects.css';
 
 export default function Projects({ onViewDetail, banner }: { onViewDetail?: (slug: string) => void, banner?: string }) {
@@ -19,11 +19,9 @@ export default function Projects({ onViewDetail, banner }: { onViewDetail?: (slu
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
   const getImgUrl = (path: string) => {
     if (!path) return 'https://placehold.co/600x400?text=No+Image';
-    if (path.startsWith('http')) return path;
-    return `${BASE_URL.replace('/api', '')}${path}`;
+    return getFullImgUrl(path);
   };
 
   useEffect(() => {

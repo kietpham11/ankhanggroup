@@ -3,6 +3,7 @@ import {
   ArrowLeft, MapPin, Calendar, User, 
   Edit, Box, FileText, RefreshCw, Trash, X, Plus
 } from 'lucide-react';
+import { getFullImgUrl } from '../../../lib/api';
 import './ProjectDetail.css';
 
 interface ProjectDetailProps {
@@ -29,7 +30,7 @@ export default function ProjectDetail({ project, onBack, onEdit, onDelete }: Pro
 
       {/* Top Card */}
       <div className="apd-top-card">
-        <img src={project.image} alt={project.name} className="apd-thumbnail" />
+        <img src={getFullImgUrl(project.image)} alt={project.name} className="apd-thumbnail" />
         <div className="apd-top-info">
           <div className="apd-title-row">
             <h2>{project.name}</h2>
@@ -121,7 +122,7 @@ export default function ProjectDetail({ project, onBack, onEdit, onDelete }: Pro
               <h3 className="apd-gallery-title">Hình ảnh dự án</h3>
               <div className="apd-gallery-grid">
                 {gallery.map((img: string, idx: number) => (
-                  <img key={idx} src={img} alt="Gallery" className="apd-gallery-img" />
+                  <img key={idx} src={getFullImgUrl(img)} alt="Gallery" className="apd-gallery-img" />
                 ))}
                 <div className="apd-gallery-add" onClick={() => alert('Thêm hình ảnh')}>
                   <Plus size={24} />

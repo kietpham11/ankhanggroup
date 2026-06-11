@@ -3,6 +3,7 @@ import {
   ArrowLeft, UploadCloud, Plus, X,
   Bold, Italic, Underline, List, ListOrdered, Link, Image as ImageIcon
 } from 'lucide-react';
+import { getFullImgUrl, propertiesAPI } from '../../../lib/api';
 import './ProjectEdit.css';
 
 interface ProjectEditProps {
@@ -211,14 +212,7 @@ export default function ProjectEdit({ project, onBack, onSave }: ProjectEditProp
       const files = Array.from(e.target.files);
       setIsUploading(true);
       try {
-        const uploadPromises = files.map(async f => {
-          const res = await fetch(import.meta.env.VITE_API_URL + '/properties/upload', {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${localStorage.getItem('gl_token')}` },
-            body: (() => { const fd = new FormData(); fd.append('image', f); return fd; })()
-          });
-          return res.json();
-        });
+        const uploadPromises = files.map(f => propertiesAPI.uploadImage(f));
         const results = await Promise.all(uploadPromises);
         const newUrls = results.map(r => r.url);
         setGallery([...gallery, ...newUrls]);
@@ -233,12 +227,7 @@ export default function ProjectEdit({ project, onBack, onSave }: ProjectEditProp
   const uploadFile = async (file: File, setter: (url: string) => void) => {
     try {
       setIsUploading(true);
-      const res = await fetch(import.meta.env.VITE_API_URL + '/properties/upload', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${localStorage.getItem('gl_token')}` },
-        body: (() => { const fd = new FormData(); fd.append('image', file); return fd; })()
-      });
-      const data = await res.json();
+      const data = await propertiesAPI.uploadImage(file);
       setter(data.url);
     } catch (err: any) {
       alert('Lỗi upload ảnh');
@@ -420,7 +409,7 @@ export default function ProjectEdit({ project, onBack, onSave }: ProjectEditProp
             <div className="pe-upload-box">
               {mainImage ? (
                 <div className="pe-img-preview">
-                  <img src={mainImage} alt="Main" />
+                  <img src={getFullImgUrl(mainImage)} alt="Main" />
                   <button className="pe-remove-btn" onClick={() => setMainImage('')}><X size={16}/></button>
                 </div>
               ) : (
@@ -456,7 +445,7 @@ export default function ProjectEdit({ project, onBack, onSave }: ProjectEditProp
               <div className="pe-gallery-preview">
                 {gallery.map((img, i) => (
                   <div key={i} className="pe-img-preview small">
-                    <img src={img} alt="Gallery" />
+                    <img src={getFullImgUrl(img)} alt="Gallery" />
                     <button className="pe-remove-btn" onClick={() => {
                       const newG = [...gallery]; newG.splice(i, 1); setGallery(newG);
                     }}><X size={14}/></button>
@@ -578,7 +567,7 @@ export default function ProjectEdit({ project, onBack, onSave }: ProjectEditProp
             <div className="pe-map-preview pe-map-upload">
               {mapImage ? (
                 <>
-                  <img src={mapImage} alt="Ảnh vị trí dự án" style={{ width: '100%', height: '250px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
+                  <img src={getFullImgUrl(mapImage)} alt="Ảnh vị trí dự án" style={{ width: '100%', height: '250px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #e2e8f0' }} />
                   <button className="pe-remove-btn" onClick={() => setMapImage('')} style={{ position: 'absolute', top: 10, right: 10, background: 'red', color: 'white', border: 'none', borderRadius: '50%', width: 24, height: 24, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Xóa ảnh"><X size={12} /></button>
                 </>
               ) : (

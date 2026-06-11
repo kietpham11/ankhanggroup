@@ -1,10 +1,22 @@
 import multer from 'multer';
+import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const MB = 1024 * 1024;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PROJECT_ROOT = path.resolve(__dirname, '..', '..');
 
 export const IMAGE_UPLOAD_LIMIT = 5 * MB;
 export const CV_UPLOAD_LIMIT = 5 * MB;
+export const LEGACY_UPLOAD_ROOT = path.join(PROJECT_ROOT, 'server', 'uploads');
+export const UPLOAD_ROOT = process.env.UPLOAD_ROOT
+  ? path.resolve(process.env.UPLOAD_ROOT)
+  : LEGACY_UPLOAD_ROOT;
 
 const IMAGE_MIME_TYPES = new Set([
   'image/jpeg',
@@ -31,6 +43,32 @@ function createFileFilter({ allowedMimeTypes, allowedExtensions, label }) {
     }
     return cb(new Error(`${label} khong dung dinh dang cho phep.`));
   };
+}
+
+export function getUploadDir(folder) {
+  return path.join(UPLOAD_ROOT, folder);
+}
+
+export function ensureUploadDir(folder) {
+  const uploadDir = getUploadDir(folder);
+  fs.mkdirSync(uploadDir, { recursive: true });
+  return uploadDir;
+}
+
+export function createUploadStorage(folder, filenamePrefix = '') {
+  return multer.diskStorage({
+    destination: function (req, file, cb) {
+      try {
+        cb(null, ensureUploadDir(folder));
+      } catch (error) {
+        cb(error);
+      }
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, filenamePrefix + uniqueSuffix + path.extname(file.originalname || ''));
+    }
+  });
 }
 
 export function createImageUpload(storage, maxSize = IMAGE_UPLOAD_LIMIT) {

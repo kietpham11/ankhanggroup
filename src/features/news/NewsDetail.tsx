@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   ChevronRight, ChevronLeft, Calendar, Eye, Share2, Bookmark, Mail
 } from 'lucide-react';
-import { postsAPI, contactsAPI } from '../../lib/api';
+import { postsAPI, contactsAPI, getFullImgUrl } from '../../lib/api';
 import './NewsDetail.css';
 
 interface NewsDetailProps {
@@ -64,11 +64,9 @@ export default function NewsDetail({ onBack, newsId }: NewsDetailProps) {
     }
   };
 
-  const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
   const getImgUrl = (path: string) => {
     if (!path) return 'https://placehold.co/1200x600?text=No+Image';
-    if (path.startsWith('http')) return path;
-    return BASE_URL.replace('/api', '') + path;
+    return getFullImgUrl(path);
   };
 
   if (loading) {
