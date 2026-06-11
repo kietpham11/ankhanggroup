@@ -93,39 +93,39 @@ export default function ProjectDetail({ onBack, projectSlug }: ProjectDetailProp
           <ArrowLeft size={20} /> Quay lại danh sách dự án
         </button>
 
-        {/* Gallery - Moved outside for full width */}
-        <div className="pd-gallery pd-gallery-fullwidth">
-          <div className="pd-main-image-wrapper">
-            <span className="pd-badge">{project.category || 'Dự án'}</span>
-            <img
-              src={images[currentImageIndex]}
-              alt="Project main"
-              className="pd-main-image"
-              onClick={() => setLightboxOpen(true)}
-              style={{ cursor: 'zoom-in' }}
-            />
-            <button className="pd-nav-btn prev" onClick={prevImage}><ChevronLeft size={24} /></button>
-            <button className="pd-nav-btn next" onClick={nextImage}><ChevronRight size={24} /></button>
-            <div className="pd-image-counter">
-              {currentImageIndex + 1} / {images.length}
-            </div>
-          </div>
-          <div className="pd-thumbnails">
-            {images.map((img: string, idx: number) => (
-              <div 
-                key={idx} 
-                className={`pd-thumb ${idx === currentImageIndex ? 'active' : ''}`}
-                onClick={() => setCurrentImageIndex(idx)}
-              >
-                <img src={img} alt={`Thumb ${idx}`} />
-              </div>
-            ))}
-          </div>
-        </div>
-
         <div className="pd-main-layout">
           {/* LEFT COLUMN */}
           <div className="pd-left-col">
+            {/* Gallery */}
+            <div className="pd-gallery">
+              <div className="pd-main-image-wrapper">
+                <span className="pd-badge">{project.category || 'Dự án'}</span>
+                <img
+                  src={images[currentImageIndex]}
+                  alt="Project main"
+                  className="pd-main-image"
+                  onClick={() => setLightboxOpen(true)}
+                  style={{ cursor: 'zoom-in' }}
+                />
+                <button className="pd-nav-btn prev" onClick={prevImage}><ChevronLeft size={24} /></button>
+                <button className="pd-nav-btn next" onClick={nextImage}><ChevronRight size={24} /></button>
+                <div className="pd-image-counter">
+                  {currentImageIndex + 1} / {images.length}
+                </div>
+              </div>
+              <div className="pd-thumbnails">
+                {images.map((img: string, idx: number) => (
+                  <div 
+                    key={idx} 
+                    className={`pd-thumb ${idx === currentImageIndex ? 'active' : ''}`}
+                    onClick={() => setCurrentImageIndex(idx)}
+                  >
+                    <img src={img} alt={`Thumb ${idx}`} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {/* Overview Content */}
             <div className="pd-overview-row" style={{ display: 'block', marginTop: '2rem' }}>
               <div className="pd-overview-content" style={{ width: '100%', paddingRight: 0 }}>
