@@ -14,6 +14,7 @@ interface ProjectDetailProps {
 
 export default function ProjectDetail({ onBack, projectSlug }: ProjectDetailProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const [contactName, setContactName] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -99,7 +100,13 @@ export default function ProjectDetail({ onBack, projectSlug }: ProjectDetailProp
             <div className="pd-gallery">
               <div className="pd-main-image-wrapper">
                 <span className="pd-badge">{project.category || 'Dự án'}</span>
-                <img src={images[currentImageIndex]} alt="Project main" className="pd-main-image" />
+                <img
+                  src={images[currentImageIndex]}
+                  alt="Project main"
+                  className="pd-main-image"
+                  onClick={() => setLightboxOpen(true)}
+                  style={{ cursor: 'zoom-in' }}
+                />
                 <button className="pd-nav-btn prev" onClick={prevImage}><ChevronLeft size={24} /></button>
                 <button className="pd-nav-btn next" onClick={nextImage}><ChevronRight size={24} /></button>
                 <div className="pd-image-counter">
@@ -293,6 +300,26 @@ export default function ProjectDetail({ onBack, projectSlug }: ProjectDetailProp
       <div className="pd-container" style={{ marginTop: '4rem' }}>
         <LoanCalculator />
       </div>
+
+      {/* Lightbox */}
+      {lightboxOpen && (
+        <div className="pd-lightbox-overlay" onClick={() => setLightboxOpen(false)}>
+          <button className="pd-lightbox-close" onClick={() => setLightboxOpen(false)}>✕</button>
+          <button className="pd-lightbox-nav prev" onClick={e => { e.stopPropagation(); prevImage(); }}>
+            <ChevronLeft size={36} />
+          </button>
+          <img
+            src={images[currentImageIndex]}
+            alt="Fullscreen"
+            className="pd-lightbox-img"
+            onClick={e => e.stopPropagation()}
+          />
+          <button className="pd-lightbox-nav next" onClick={e => { e.stopPropagation(); nextImage(); }}>
+            <ChevronRight size={36} />
+          </button>
+          <div className="pd-lightbox-counter">{currentImageIndex + 1} / {images.length}</div>
+        </div>
+      )}
     </div>
   );
 }
